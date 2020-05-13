@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Sofia Valdivieso-Sinyakov" />
+    <meta name="description" content="Describe your website">
+    <link rel="shortcut icon" type="image/x-icon" href="/img/favicon.ico">
+    <title>Project 2: Modeling, Testing, and Predicting</title>
+    <meta name="generator" content="Hugo 0.70.0" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:200,400,200bold,400old" />
+    
+    <!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+    
+  </head>
+
+  <body>
+    <div id="wrap">
+
+      
+      <nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="/"><i class="fa fa-home"></i></a>
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <div class="navbar-collapse collapse" id="navbar">
+      <ul class="nav navbar-nav navbar-right">
+      
+        
+        <li><a href="/blog/">BLOG</a></li>
+        
+        <li><a href="/projects/">PROJECTS</a></li>
+        
+        <li><a href="/resume/">RESUME</a></li>
+        
+      
+      </ul>
+    </div>
+  </div>
+</nav>
+
+      
+      <div class="container">
+        <div class="blog-post">
+          <h3>
+            <strong><a href="/project2/">Project 2: Modeling, Testing, and Predicting</a></strong>
+          </h3>
+        </div>
+        <div class="blog-title">
+          <h4>
+          January 1, 0001
+            &nbsp;&nbsp;
+            
+          </h4>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <div class="blogpost">
+              
+
+
+<div id="modeling" class="section level1">
+<h1>Modeling</h1>
+<div id="find-dataintroductiontidying" class="section level2">
+<h2>Find data/Introduction/Tidying:</h2>
+<p>     I chose to work again with my dataset from project one because it revealed some interesting correlations. The original dataset has 3,191 observations and 534 Variables stemming from many different national data servers. I selected for 6 particular variables. Each observation contains the population of a particular city (not selected for/identified here but sourced from the Census Population Estimates) within a state in the US, and the percentage of that population that experienced insufficient sleep (data sourced from the Behavioral Risk Factor Surveillance System). I also selected the average life expectancy for such populations (sourced from the National Center for Health Statistics) and the average number of poor mental health days they experienced (sourced from the Behavioral Risk Factor Surveillance System). These descriptions are from project one, but next I’ll describe more about each contribution to the comparison at hand.</p>
+<p>     From the data we can see that CA has the largest population and has the most number of people not sleeping enough, with TX in second place and FL in third, and the same ordered pattern appears for the percentage of the population and actual number of people experiencing insufficient sleep. And when you look at the average number of poor mental health days, FL appears to have the most, with CA in second and TX in third. However, for life expectancy, TX has the lowest and CA had the highest. I’ve heard in the past that on average women tend to have more mental health issues, but whether that is linked more to societal pressures for males not reporting or otherwise is unknown. I wanted to see if there was a pattern between populations’ sleeping amounts, poor mental health days, and the composition of the populations regarding females, in addition to other variables.</p>
+<p>     The following code tidys the data so that I’ve shortened the column names for easier referencing and removed any states that have less than 10 occurrences just in case, which effectively removed Delaware (DE), Hawaii (HI), Rhode Island (RI) and Conneticut (CT) because they each had 4, 6, 6, and 9 occurrences respectively. In addition I also decided to make my categorical variable, state, to be smaller by selecting for only the state with the top 3 largest populations. Also I added some preliminary code to explain how I determined the information talked about in the previous paragraph. I’ve included a new binary variale that indicates whether the county had a greater than or equal to 50% female population and set it to 1, and those for less than got a 0.</p>
+<pre class="r"><code>library(readxl)
+library(dplyr)
+library(Hmisc)
+library(gridExtra)
+sleep_and_health_issues &lt;- read_excel(&quot;C:\\Users\\sofia\\Desktop\\SDS 348\\Project
+2\\sleep and health issues.xls&quot;)
+data &lt;- sleep_and_health_issues %&gt;% select(-Digit_FIPS_Code) %&gt;% rename(PMHD =
+Poor_mental_health_days_raw_value,
+LE = Life_expectancy_raw_value, IS = Insufficient_sleep_raw_value, POP =
+Population_raw_value,
+State_Abbreviation = State_Abbreviation, Fem_Percent = Percent_Females_raw_value) %&gt;%
+group_by(State_Abbreviation) %&gt;%
+filter(n() &gt;= 10) %&gt;% mutate(Majority_Females = ifelse(Fem_Percent &gt;= 0.5, 1, 0)) %&gt;%
+filter(State_Abbreviation %in%
+c(&quot;CA&quot;, &quot;TX&quot;, &quot;FL&quot;)) %&gt;% na.omit()
+data &lt;- data[c(1:3, 5:6, 4, 7)]
+head(data)</code></pre>
+<pre><code># A tibble: 6 x 7
+# Groups:   State_Abbreviation [1]
+  State_Abbreviation  PMHD    LE      POP    IS Fem_Percent Majority_Females
+  &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt;    &lt;dbl&gt; &lt;dbl&gt;       &lt;dbl&gt;            &lt;dbl&gt;
+1 CA                  3.54  81.5 39536653 0.345       0.503                1
+2 CA                  3.35  82.7  1663190 0.335       0.508                1
+3 CA                  3.60  80.4    38626 0.302       0.460                0
+4 CA                  4.15  77.8   229294 0.317       0.505                1
+5 CA                  3.68  79.8    45670 0.308       0.502                1
+6 CA                  3.87  80.0    21805 0.333       0.488                0</code></pre>
+<pre class="r"><code>data %&gt;% mutate(total_POP = sum(POP)) %&gt;% arrange(desc(total_POP)) %&gt;% distinct(total_POP)</code></pre>
+<pre><code># A tibble: 3 x 2
+# Groups:   State_Abbreviation [3]
+  total_POP State_Abbreviation
+      &lt;dbl&gt; &lt;chr&gt;             
+1  79072186 CA                
+2  56591942 TX                
+3  41968800 FL                </code></pre>
+<pre class="r"><code>data %&gt;% group_by(State_Abbreviation) %&gt;% summarise_at(vars(IS), list(IS_mean = mean))</code></pre>
+<pre><code># A tibble: 3 x 2
+  State_Abbreviation IS_mean
+  &lt;chr&gt;                &lt;dbl&gt;
+1 CA                   0.320
+2 FL                   0.355
+3 TX                   0.319</code></pre>
+<pre class="r"><code>data %&gt;% group_by(State_Abbreviation) %&gt;% mutate(not_sleeping = sum(IS * POP)) %&gt;%
+arrange(desc(not_sleeping)) %&gt;%
+select(-c(PMHD, LE, IS, POP)) %&gt;% distinct(not_sleeping)</code></pre>
+<pre><code># A tibble: 3 x 2
+# Groups:   State_Abbreviation [3]
+  not_sleeping State_Abbreviation
+         &lt;dbl&gt; &lt;chr&gt;             
+1    26867343. CA                
+2    18564964. TX                
+3    14521403. FL                </code></pre>
+<pre class="r"><code>data %&gt;% group_by(State_Abbreviation) %&gt;% mutate(mean_PMHD = mean(PMHD, na.rm = TRUE))
+%&gt;%
+arrange(desc(mean_PMHD)) %&gt;% distinct(mean_PMHD)</code></pre>
+<pre><code># A tibble: 3 x 2
+# Groups:   State_Abbreviation [3]
+  mean_PMHD State_Abbreviation
+      &lt;dbl&gt; &lt;chr&gt;             
+1      4.11 FL                
+2      3.79 CA                
+3      3.65 TX                </code></pre>
+<pre class="r"><code>data %&gt;% group_by(State_Abbreviation) %&gt;% mutate(mean_LE = mean(LE, na.rm = TRUE)) %&gt;%
+arrange(mean_LE) %&gt;%
+distinct(mean_LE)</code></pre>
+<pre><code># A tibble: 3 x 2
+# Groups:   State_Abbreviation [3]
+  mean_LE State_Abbreviation
+    &lt;dbl&gt; &lt;chr&gt;             
+1    77.4 TX                
+2    78.2 FL                
+3    80.1 CA                </code></pre>
+<pre class="r"><code>y &lt;- ggplot(data, aes(x = PMHD, y = IS)) + geom_point(alpha = 0.5) + geom_density_2d(h =
+0.5) +
+facet_wrap(~State_Abbreviation) + expand_limits(x = c(2.5, 5), y = c(0, 1)) +
+scale_x_continuous(n.breaks = 5)
+yy &lt;- ggplot(data, aes(x = LE, y = IS)) + geom_point(alpha = 0.5) + geom_density_2d(h =
+2) +
+facet_wrap(~State_Abbreviation) + expand_limits(x = c(65, 100), y = c(-1, 1.5)) +
+scale_x_continuous(n.breaks = 5)
+yyy &lt;- ggplot(data, aes(x = LE, y = PMHD)) + geom_point(alpha = 0.5) + geom_density_2d(h
+= 3) +
+facet_wrap(~State_Abbreviation) + expand_limits(x = c(65, 90), y = c(2, 5)) +
+scale_x_continuous(n.breaks = 5)
+grid.arrange(y, yy, yyy, nrow = 3)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-1-1.png" width="768" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Since the bivariate densities for each group (PMHD and IS) are ovoid/circular (graph y),
+# the assumptions are met for those, but fail with LExIS &amp; LExPMHD for CA &amp; FL</code></pre>
+<pre class="r"><code>covmats &lt;- data %&gt;% group_by(State_Abbreviation) %&gt;% do(covs = cov(.[2:5]))
+for (i in 1:3) {
+    print(as.character(covmats$State_Abbreviation[i]))
+    print(covmats$covs[i])
+}</code></pre>
+<pre><code>[1] &quot;CA&quot;
+[[1]]
+              PMHD            LE           POP            IS
+PMHD  1.116071e-01 -7.069184e-01 -3.013485e+05  2.423934e-03
+LE   -7.069184e-01  7.644706e+00  1.915643e+06 -2.132148e-02
+POP  -3.013485e+05  1.915643e+06  2.819763e+13  2.763128e+04
+IS    2.423934e-03 -2.132148e-02  2.763128e+04  6.350295e-04
+
+[1] &quot;FL&quot;
+[[1]]
+              PMHD            LE           POP            IS
+PMHD  1.032690e-01 -5.787247e-01 -1.744837e+05  5.884942e-03
+LE   -5.787247e-01  7.669998e+00  1.122971e+06 -5.399223e-02
+POP  -1.744837e+05  1.122971e+06  6.527119e+12 -5.435411e+03
+IS    5.884942e-03 -5.399223e-02 -5.435411e+03  9.968857e-04
+
+[1] &quot;TX&quot;
+[[1]]
+              PMHD            LE           POP            IS
+PMHD  5.395048e-02 -1.103531e-01 -3.664675e+04  1.729388e-03
+LE   -1.103531e-01  6.294887e+00  4.085284e+05 -2.627805e-03
+POP  -3.664675e+04  4.085284e+05  3.509242e+12  2.206076e+03
+IS    1.729388e-03 -2.627805e-03  2.206076e+03  3.063826e-04</code></pre>
+<pre class="r"><code># PMHD, POP, and IS might be violating the assumption that there is homogeneity of
+# (co)variances.</code></pre>
+<hr />
+</div>
+<div id="data-analysis" class="section level2">
+<h2>Data Analysis</h2>
+<div id="manova-univariate-anovas-post-hoc-t-tests-type-1-error-calculation-bonferroni-correction" class="section level3">
+<h3>1. MANOVA, Univariate ANOVAs, Post-Hoc t-tests, Type 1 Error calculation, Bonferroni Correction</h3>
+<pre class="r"><code>manova &lt;- manova(cbind(PMHD, LE, POP, IS) ~ State_Abbreviation, data = data)
+summary(manova)</code></pre>
+<pre><code>                    Df  Pillai approx F num Df den Df    Pr(&gt;F)    
+State_Abbreviation   2 0.59876    38.35      8    718 &lt; 2.2e-16 ***
+Residuals          361                                             
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># Since the p-value is 2.2e-16 (which is &lt; 0.05), we can reject the null hypothesis that
+# the means for of of the variables are equal and at least one of them differ by state.</code></pre>
+<pre class="r"><code>summary.aov(manova)</code></pre>
+<pre><code> Response PMHD :
+                    Df Sum Sq Mean Sq F value    Pr(&gt;F)    
+State_Abbreviation   2 11.567  5.7835  80.096 &lt; 2.2e-16 ***
+Residuals          361 26.067  0.0722                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ Response LE :
+                    Df  Sum Sq Mean Sq F value    Pr(&gt;F)    
+State_Abbreviation   2  348.46 174.230  25.761 3.481e-11 ***
+Residuals          361 2441.53   6.763                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ Response POP :
+                    Df     Sum Sq    Mean Sq F value  Pr(&gt;F)  
+State_Abbreviation   2 6.0474e+13 3.0237e+13   3.795 0.02338 *
+Residuals          361 2.8763e+15 7.9675e+12                  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+ Response IS :
+                    Df   Sum Sq  Mean Sq F value    Pr(&gt;F)    
+State_Abbreviation   2 0.070388 0.035194  72.351 &lt; 2.2e-16 ***
+Residuals          361 0.175601 0.000486                      
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># univariate ANOVAs: All variables have a p-value less than 0.05 and are significant.</code></pre>
+<pre class="r"><code>pairwise.t.test(data$PMHD, data$State_Abbreviation, p.adj = &quot;none&quot;)  #All states pass</code></pre>
+<pre><code>
+    Pairwise comparisons using t tests with pooled SD 
+
+data:  data$PMHD and data$State_Abbreviation 
+
+   CA      FL     
+FL 5.4e-11 -      
+TX 0.00037 &lt; 2e-16
+
+P value adjustment method: none </code></pre>
+<pre class="r"><code>pairwise.t.test(data$LE, data$State_Abbreviation, p.adj = &quot;none&quot;)  #FL vs TX don&#39;t pass</code></pre>
+<pre><code>
+    Pairwise comparisons using t tests with pooled SD 
+
+data:  data$LE and data$State_Abbreviation 
+
+   CA      FL   
+FL 3.1e-05 -    
+TX 4.9e-12 0.034
+
+P value adjustment method: none </code></pre>
+<pre class="r"><code>pairwise.t.test(data$IS, data$State_Abbreviation, p.adj = &quot;none&quot;)  #CA vs TX don&#39;t pass</code></pre>
+<pre><code>
+    Pairwise comparisons using t tests with pooled SD 
+
+data:  data$IS and data$State_Abbreviation 
+
+   CA     FL    
+FL &lt;2e-16 -     
+TX 0.74   &lt;2e-16
+
+P value adjustment method: none </code></pre>
+<pre class="r"><code>pairwise.t.test(data$POP, data$State_Abbreviation, p.adj = &quot;none&quot;)</code></pre>
+<pre><code>
+    Pairwise comparisons using t tests with pooled SD 
+
+data:  data$POP and data$State_Abbreviation 
+
+   CA     FL    
+FL 0.1400 -     
+TX 0.0068 0.3290
+
+P value adjustment method: none </code></pre>
+<pre class="r"><code># CA v FL &amp; TX vs FL don&#39;t pass</code></pre>
+<pre class="r"><code>1 - 0.95^14  #Probability for making type 1 error (51.2325%)</code></pre>
+<pre><code>[1] 0.512325</code></pre>
+<pre class="r"><code>0.05/14  #Bonferroni Adjustment = 0.003571429</code></pre>
+<pre><code>[1] 0.003571429</code></pre>
+<p>     MANOVA tests have many assumptions including: (1) Random samples, independent observations (2) Multivariate normality of DVs (or each group) with the ANOVA tests assumeing DV normally distributed within each group as well, (3) Homogeneity of within-group covariance matrices (where ANOVA assumes equal variance for DV within each group) is for each DV and equal covariance between any two DVs, (4) Linear relationships among DVs, (5) No extreme univariate or multivariate outliers, and (6) No multicollinearity (i.e., DVs should not be too correlated).</p>
+<p>     Examination of bivariate density plots for each group revealed large departures from multivariate normality which is determined by the densities not being circular or ovoid for LExPMHD and LExIS comparisons. Examination of covariance matrices for each group revealed there are deviations from homogeneity. MANOVA would not be considered to be an appropriate analysis technique (but we will continue with it anyways for now).</p>
+<p>     Since the p-value is 2.2e-16 (which is &lt; 0.05), we can reject the null hypothesis that the means for of of the variables are equal and at least one of them differ by state. Running the univariate ANOVAs from the MANOVA object reveals that PMHD, LE, POP, and IE have a p-value less than 0.05 and are significant and differ by at least one state.</p>
+<p>     Since we did a lot of tests (14), the probability for accruing a type 1 error was 51.2325%, which is really high, which means there is a high chance that we are rejecting the null hypothesis even though it is true.</p>
+<p>     After performing a bonferroni correction and using it as the cut-off for significance when comparing the p-values of the post-hoc t-tests we can see that for PMHD, none of the states are significantly different from one another which is the same thing as failing to reject the null hypothesis. For LE there p-value for FL vs TX was too large, and there is a significant difference between those two states. For IS the p-value for CA vs TX was too large so there was a significant difference between those two states. And finally, POP had a significant difference between CA and FL, as well as TX and FL.</p>
+<div style="page-break-after: always;"></div>
+</div>
+<div id="randomization-test-with-hypotheses" class="section level3">
+<h3>2. Randomization test with hypotheses</h3>
+<pre class="r"><code>majF_IS &lt;- data %&gt;% filter(Majority_Females == &quot;1&quot;) %&gt;% select(IS)
+majF_IS &lt;- majF_IS[2]
+minF_IS &lt;- data %&gt;% filter(Majority_Females == &quot;0&quot;) %&gt;% select(IS)
+minF_IS &lt;- minF_IS[2]
+dat &lt;- data.frame(pop_perc = c(rep(&quot;majF_IS&quot;, 206), rep(&quot;minF_IS&quot;, 158)), sleepless =
+c(majF_IS$IS,
+minF_IS$IS))
+
+sleepless &lt;- dat$sleepless
+pop_fem_situation &lt;- dat$pop_perc
+
+sleeper_means &lt;- dat %&gt;% group_by(pop_perc) %&gt;% summarise_at(vars(sleepless),
+list(IS_mean = mean))
+mean_majF_IS &lt;- sleeper_means %&gt;% filter(pop_perc == &quot;majF_IS&quot;) %&gt;% select(IS_mean)
+mean_minF_IS &lt;- sleeper_means %&gt;% filter(pop_perc == &quot;minF_IS&quot;) %&gt;% select(IS_mean)
+
+actual_mean_difference &lt;- mean_minF_IS - mean_majF_IS
+actual_mean_difference</code></pre>
+<pre><code>     IS_mean
+1 0.00865056</code></pre>
+<pre class="r"><code>rand_dist &lt;- vector()
+for (i in 1:5000) {
+new &lt;- data.frame(sleepless = sample(dat$sleepless), pop_perc = dat$pop_perc)
+rand_dist[i] &lt;- mean(new[new$pop_perc == &quot;minF_IS&quot;, ]$sleepless) - mean(new[new$pop_perc
+==
+&quot;majF_IS&quot;, ]$sleepless)
+}
+{
+hist(rand_dist, main = &quot;&quot;, ylab = &quot;&quot;)
+abline(v = 0.00865056, col = &quot;red&quot;)
+}</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-7-1.png" width="80%" height="32%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>varP &lt;- mean(rand_dist &gt; 0.00865056 | rand_dist &lt; -0.00865056)
+varP</code></pre>
+<pre><code>[1] 0.0016</code></pre>
+<pre class="r"><code># P-value equals 0.002, which is less than 0.05, so we can reject the null hypothes is
+that
+# populations that have a majority of the population being female or not have the same
+# percentage of the population experiencing insufficient sleep.</code></pre>
+<pre class="r"><code>t.test(data = dat, sleepless ~ pop_fem_situation)</code></pre>
+<pre><code>
+    Welch Two Sample t-test
+
+data:  sleepless by pop_fem_situation
+t = -3.1435, df = 321.28, p-value = 0.001825
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.01406457 -0.00323655
+sample estimates:
+mean in group majF_IS mean in group minF_IS 
+            0.3219250             0.3305755 </code></pre>
+<pre class="r"><code># p-value = 0.001825, which is similar to the one we got through the randomization test.
+# This test makes the normal assumption but not the equal variances assumption. By doing
+# the permutation test we don&#39;t make any assumptions so the p-value for the randomization
+# test is slightly smaller since it&#39;s more conserved.</code></pre>
+<p>     The null hypothesis is that both populations with a majority (&gt;=50% female) and without a majority (&lt;50%) being female, have the same mean percentage of the population experiencing insufficient sleep. The alternative hypothesis is that mean percentage of the population experiencing insufficient sleep is different for populations who have &gt;=50% being women vs those who don’t have the majority being women. The actual mean difference for IS between the binary groups of Majority_Females is equal to 0.00865056. By randomizing the IS and resampling 5000 times, we create a vector of the values with data from both groups and we see that the p-value for this new mean for this test is 0.002, which is less than 0.05 so we can reject the null hypothesis.</p>
+</div>
+<div id="linear-regression-model-with-interaction-mean-centering" class="section level3">
+<h3>3. Linear Regression Model (with interaction) + Mean Centering</h3>
+<pre class="r"><code>data$PMHD_c &lt;- data$PMHD - mean(data$PMHD)
+fit &lt;- lm(IS ~ Majority_Females * PMHD_c, data = data)
+summary(fit)</code></pre>
+<pre><code>
+Call:
+lm(formula = IS ~ Majority_Females * PMHD_c, data = data)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.069092 -0.014164 -0.001304  0.012959  0.057212 
+
+Coefficients:
+                         Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              0.330454   0.001623 203.617  &lt; 2e-16 ***
+Majority_Females        -0.008462   0.002157  -3.922 0.000105 ***
+PMHD_c                   0.056103   0.004740  11.837  &lt; 2e-16 ***
+Majority_Females:PMHD_c -0.015706   0.006651  -2.361 0.018746 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.0204 on 360 degrees of freedom
+Multiple R-squared:  0.391, Adjusted R-squared:  0.3859 
+F-statistic: 77.04 on 3 and 360 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>     For counties with average PMHD, those with the population &lt;50% females have a predicted percentage of the population to experience insufficient sleep of 33.0454%, and counties with a population of &gt;=50% females and the average PMHD have a predicted percentage of the population to experience insufficient sleep that is 0.08462 lower. PMHD is significantly associated with IS for populations containing &gt;50% females, and for every 1-unit increase in PMHD, IS goes up by 0.056103 (slope for PMHD for reference group = 0.056103). And finally, the coefficient for Majority_Females:PMHD_c shows the estimated difference (-0.015706) in slopes between PMHD for the effect of the population having its majority be female in comparison to those with &lt;50% female on IS.</p>
+<pre class="r"><code>ggplot(data, aes(PMHD_c, IS)) + geom_point(aes(colour = factor(Majority_Females))) +
+stat_smooth(method = &quot;lm&quot;,
+se = FALSE, fullrange = TRUE) + scale_colour_discrete(name = &quot;Population Female\n
+Percentage&quot;,
+labels = c(&quot;&lt;50%&quot;, &quot;&gt;=50%&quot;)) + ggtitle(&quot;IS~PMHC_c Regression&quot;) + theme(plot.title =
+element_text(hjust = 0.5))</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-10-1.png" width="80%" height="40%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># This plot demonstrates linearity between the predictor (centered PMHD) and the response
+# variable (IS).</code></pre>
+<pre class="r"><code># Test for homoskedasticity
+resids &lt;- fit$residuals
+fitvals &lt;- fit$fitted.values
+ggplot() + geom_point(aes(fitvals, resids)) + geom_hline(yintercept = 0, color = &quot;red&quot;)</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-11-1.png" width="80%" height="43%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># The homoskedacity is fine because there is generally no pattern with no obvious flaring
+# near the ends.</code></pre>
+<pre class="r"><code># Linearity test
+plot(fit, 1)  #fairly linear</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-12-1.png" width="75%" height="38%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># Normality test
+plot(fit, 2)  #Normality is met.</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-13-1.png" width="80%" height="43%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ks.test(resids, &quot;pnorm&quot;, mean = 0, sd(resids))</code></pre>
+<pre><code>
+    One-sample Kolmogorov-Smirnov test
+
+data:  resids
+D = 0.063036, p-value = 0.1108
+alternative hypothesis: two-sided</code></pre>
+<pre class="r"><code># We can&#39;t reject the null hypothesis that the true distribution of the residuals is
+# normal.
+shapiro.test(resids)  #Ho: true distribution is normal --&gt; again can&#39;t reject it</code></pre>
+<pre><code>
+    Shapiro-Wilk normality test
+
+data:  resids
+W = 0.98992, p-value = 0.01328</code></pre>
+<pre class="r"><code>library(sandwich)
+library(lmtest)
+bptest(fit)</code></pre>
+<pre><code>
+    studentized Breusch-Pagan test
+
+data:  fit
+BP = 7.8247, df = 3, p-value = 0.04978</code></pre>
+<pre class="r"><code># Ho: model is homoskedastic --&gt; we can reject the null hypothesis of equal variances
+# (We&#39;ve violated the assumption) we can reject the null that the variance of the
+residuals
+# is constant, thus heteroskedacity is present.
+summary(fit)$coef</code></pre>
+<pre><code>                            Estimate  Std. Error    t value     Pr(&gt;|t|)
+(Intercept)              0.330453808 0.001622919 203.616962 0.000000e+00
+Majority_Females        -0.008461635 0.002157312  -3.922305 1.050341e-04
+PMHD_c                   0.056103162 0.004739793  11.836626 1.585196e-27
+Majority_Females:PMHD_c -0.015705686 0.006651458  -2.361240 1.874607e-02</code></pre>
+<pre class="r"><code>coeftest(fit, vcov = vcovHC(fit))</code></pre>
+<pre><code>
+t test of coefficients:
+
+                          Estimate Std. Error  t value  Pr(&gt;|t|)    
+(Intercept)              0.3304538  0.0015202 217.3719 &lt; 2.2e-16 ***
+Majority_Females        -0.0084616  0.0021363  -3.9609 9.002e-05 ***
+PMHD_c                   0.0561032  0.0047821  11.7319 &lt; 2.2e-16 ***
+Majority_Females:PMHD_c -0.0157057  0.0070584  -2.2251   0.02669 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>     There are minor changes in the corrected SEs where all the values have gotten smaller, which is unusual. Typically they would go up because the corrected SEs provide robustness to the violations of homoskedasticity. This is because the normal SEs operate under the assumption that the null hypothesis is true (t-distribution), so the increase would essentially be reflective of the failure to meet the assumption so it acts as a penalty. So this displays the variance-covariance matrix of coefficient estimates.</p>
+<p>     The coeftest(fit,vcov=vcovHC(fit)): the corrected SEs all decreased, but the t-value increased for the intercept and Majority_Females and decreased for PMHD_c and the interaction and as a result, the corresponding p-value for the intercpt and Majority_Females decreased and the p-value for PMHD_c and the interaction increased. The decrease in p-value is because the heteroscedasticity increases the chance of making a type 1 error since the t-stats are inflated, which would lead you to having a higher chance of rejecting the null hypothesis.</p>
+<pre class="r"><code>summary(fit)</code></pre>
+<pre><code>
+Call:
+lm(formula = IS ~ Majority_Females * PMHD_c, data = data)
+
+Residuals:
+      Min        1Q    Median        3Q       Max 
+-0.069092 -0.014164 -0.001304  0.012959  0.057212 
+
+Coefficients:
+                         Estimate Std. Error t value Pr(&gt;|t|)    
+(Intercept)              0.330454   0.001623 203.617  &lt; 2e-16 ***
+Majority_Females        -0.008462   0.002157  -3.922 0.000105 ***
+PMHD_c                   0.056103   0.004740  11.837  &lt; 2e-16 ***
+Majority_Females:PMHD_c -0.015706   0.006651  -2.361 0.018746 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+
+Residual standard error: 0.0204 on 360 degrees of freedom
+Multiple R-squared:  0.391, Adjusted R-squared:  0.3859 
+F-statistic: 77.04 on 3 and 360 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>     The adjusted R^2 tells us that this regression model can explain about 38.59% of the variation in the outcome.</p>
+</div>
+<div id="regression-model-with-interaction-bootstrapped-standard-errors" class="section level3">
+<h3>4. Regression Model (with interaction) + Bootstrapped Standard Errors</h3>
+<pre class="r"><code>samp_distn &lt;- replicate(5000, {
+    boot_dat &lt;- data[sample(nrow(data), replace = TRUE), ]
+    fit3 &lt;- lm(IS ~ PMHD * Majority_Females, data = boot_dat)
+    coef(fit3)
+})
+coeftest(fit)</code></pre>
+<pre><code>
+t test of coefficients:
+
+                          Estimate Std. Error  t value  Pr(&gt;|t|)    
+(Intercept)              0.3304538  0.0016229 203.6170 &lt; 2.2e-16 ***
+Majority_Females        -0.0084616  0.0021573  -3.9223  0.000105 ***
+PMHD_c                   0.0561032  0.0047398  11.8366 &lt; 2.2e-16 ***
+Majority_Females:PMHD_c -0.0157057  0.0066515  -2.3612  0.018746 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>coeftest(fit, vcov = vcovHC(fit))</code></pre>
+<pre><code>
+t test of coefficients:
+
+                          Estimate Std. Error  t value  Pr(&gt;|t|)    
+(Intercept)              0.3304538  0.0015202 217.3719 &lt; 2.2e-16 ***
+Majority_Females        -0.0084616  0.0021363  -3.9609 9.002e-05 ***
+PMHD_c                   0.0561032  0.0047821  11.7319 &lt; 2.2e-16 ***
+Majority_Females:PMHD_c -0.0157057  0.0070584  -2.2251   0.02669 *  
+---
+Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code>samp_distn %&gt;% t %&gt;% as.data.frame %&gt;% summarize_all(sd)</code></pre>
+<pre><code>  (Intercept)        PMHD Majority_Females PMHD:Majority_Females
+1  0.01758613 0.004757642       0.02629062           0.007085289</code></pre>
+<p>     Using these SEs, we don’t make any assumptions. The SE for the intercept, PMHD, and Majority_Females increased when compared to the robust SE calculated earlier, reflecting the penalty as previously mentioned, and are way larger than both the normal SE and the corrected robust SEs. However, the SE for the PMHD:Majority_Females interaction actually decreased very slightly from the robust SE, but is barely larger than the SE from the normal SE.</p>
+<p>     The p-values also comparatively got changed. When the SE increased, the p-value decreased, which makes since since the p-values are essntially a measure used to determine significance, and if your standarad error range increases (allowing for more room for error) its an indication that it might not be as good of a predictor and would therefore be less significant. And vice versa for how it would increase in value if the SE decreased.</p>
+</div>
+<div id="logistic-regression-of-binary-categorical-variable-confusion-matrix-summary-diagnostics-roc-curve-10-fold-cv" class="section level3">
+<h3>5. Logistic Regression of Binary Categorical Variable + Confusion Matrix + Summary Diagnostics + ROC Curve + 10-fold CV</h3>
+<pre class="r"><code>fitz &lt;- glm(Majority_Females ~ PMHD + State_Abbreviation, data = data, family =
+&quot;binomial&quot;)
+coeftest(fitz)</code></pre>
+<pre><code>
+z test of coefficients:
+
+                     Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)           0.79355    1.52495  0.5204   0.6028
+PMHD                 -0.11746    0.39597 -0.2966   0.7668
+State_AbbreviationFL -0.01391    0.38438 -0.0362   0.9711
+State_AbbreviationTX -0.12861    0.30224 -0.4255   0.6705</code></pre>
+<pre class="r"><code>exp(coeftest(fitz))</code></pre>
+<pre><code>
+z test of coefficients:
+
+                     Estimate Std. Error z value Pr(&gt;|z|)
+(Intercept)           2.21122    4.59492  1.6827    1.827
+PMHD                  0.88918    1.48583  0.7433    2.153
+State_AbbreviationFL  0.98619    1.46871  0.9645    2.641
+State_AbbreviationTX  0.87932    1.35289  0.6534    1.955</code></pre>
+<p>     Controlling for state, PMHD has a negative (not significant) impact on the odds of the population having &gt;=50% females, and controlling for PMHD, state identity also has a non-significant negative impact on the odds of the population being &gt;=50% female, as well as the fact that FL and TX both have a (not significant) lower odds for having a population that is &gt;=50% female. The odds of CA have a population that is &gt;=50% females when PMHD is 0, is 2.1122. Controlling for State, for every one additional PMHD unit, the odds of the population being &gt;=50% female increases by a factor of 0.88918 (not significant). Controlling for PMHD, the odds of the population being &gt;=50% female for FL is 0.98619 times the odds of the population being &gt;=50% female for CA (not significant). Again controlling for PMHD, the odds of the population being &gt;=50% female for TX is 0.87932 times the odds of the population being &gt;=50% female for CA (not significant).</p>
+<pre class="r"><code>probs &lt;- predict(fitz, type = &quot;response&quot;) #get predictions for every student in the
+dataset
+table(predict = as.numeric(probs &gt; 0.5), truth = data$Majority_Females) %&gt;% addmargins()</code></pre>
+<pre><code>       truth
+predict   0   1 Sum
+    1   158 206 364
+    Sum 158 206 364</code></pre>
+<pre class="r"><code># Yes, thats right. I also had to double check. Not a single one was predicted to be less
+# than 50% female.</code></pre>
+<p>     <strong>Sensitivity</strong> - proportion of actual positives that were correctly identified as such –&gt; how many populations did we classify to have &gt;=50% females out of how many actually do have &gt;=50% female population. (TPR: True Positive Rate)</p>
+<pre class="r"><code>206/206</code></pre>
+<pre><code>[1] 1</code></pre>
+<p>     <strong>Specificity</strong> - proportion of actual negatives that are correctly identified as such –&gt; how many populations did we classify to have women be the minority, out of all of the populations who do have &lt;50% women. (TNR: True Negative Rate)</p>
+<pre class="r"><code>0/158</code></pre>
+<pre><code>[1] 0</code></pre>
+<p>     <strong>Precision/Recall</strong> - fraction of relevant instances among the retrieved instances –&gt; propotion of classified to have &gt;=50% population being females, out of everyone labeled to have &gt;=50% females (PPV: Positive Predictive Value)</p>
+<pre class="r"><code>206/364</code></pre>
+<pre><code>[1] 0.5659341</code></pre>
+<p>     <strong>Accuracy</strong> - the ratio of the correctly labeled subjects to the whole pool of subjects - the number of True Positives for classifying a population to have &gt;=50% females, out of all population data points.</p>
+<pre class="r"><code>(0 + 206)/364</code></pre>
+<pre><code>[1] 0.5659341</code></pre>
+<p>     Sensitivity is 1 because we predicted all of the populations to be made up of &gt;=50% females. Specificity is 0 because we didn’t predict any population to have &lt;50% women. The recall &amp; accuracy equal to 0.5659341.</p>
+<pre class="r"><code>data$Female_Percentage &lt;- factor(data$Majority_Females)
+levels(data$Female_Percentage)[match(&quot;1&quot;, levels(data$Female_Percentage))] &lt;- &quot;&gt;=50%&quot;
+levels(data$Female_Percentage)[match(&quot;0&quot;, levels(data$Female_Percentage))] &lt;- &quot;&lt;50%&quot;
+
+data$logit &lt;- predict(fitz, type = &quot;link&quot;)
+data %&gt;% ggplot() + geom_density(aes(logit, color = Female_Percentage, fill =
+Female_Percentage),
+alpha = 0.4) + theme(legend.position = c(0.85, 0.85)) + xlab(&quot;logit (log-odds)&quot;) +
+xlim(0,
+0.6) + geom_rug(aes(logit, color = Female_Percentage))</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-22-1.png" width="80%" height="43%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>library(plotROC)
+ROCplot &lt;- ggplot(data) + geom_roc(aes(d = Majority_Females, m = probs), n.cuts = 0)
+ROCplot</code></pre>
+<p><img src="/Project2_files/figure-html/unnamed-chunk-23-1.png" width="70%" height="40%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>calc_auc(ROCplot)</code></pre>
+<pre><code>  PANEL group       AUC
+1     1    -1 0.5001536</code></pre>
+<pre class="r"><code># Chance prediction! - No systematic distinction between the predictor and whether the
+# population is &gt;=50% or &lt;50% female (Garbage model)</code></pre>
+<pre class="r"><code>class_diag(probs, data$Majority_Females)</code></pre>
+<pre><code>        acc sens spec       ppv       auc
+1 0.5659341    1    0 0.5659341 0.5001536</code></pre>
+<pre class="r"><code>library(pROC)
+auc(data$Majority_Females, probs)</code></pre>
+<pre><code>Area under the curve: 0.5002</code></pre>
+<pre class="r"><code>k = 10
+stuff &lt;- data[sample(nrow(data)), ]
+folds &lt;- cut(seq(1:nrow(stuff)), breaks = k, labels = F)
+
+diags &lt;- NULL
+for (i in 1:k) {
+train &lt;- stuff[folds != i, ]
+test &lt;- stuff[folds == i, ]
+truth &lt;- test$Majority_Females
+fitz &lt;- glm(Majority_Females ~ PMHD + State_Abbreviation, data = data, family =
+&quot;binomial&quot;)
+probz &lt;- predict(fitz, newdata = test, type = &quot;response&quot;)
+diags &lt;- rbind(diags, class_diag(probz, truth))
+}
+summarize_all(diags, mean)</code></pre>
+<pre><code>        acc sens spec       ppv       auc
+1 0.5658408    1    0 0.5658408 0.5082759</code></pre>
+<p>     The average out of sample accuracy = 0.5665165, sensitivity = 1, &amp; recall(PPV) = 0.5665165.</p>
+</div>
+<div id="lasso-regression---all-predictors-vs-lambda-selected-predictors-10-fold-cv" class="section level3">
+<h3>6. LASSO Regression - All Predictors vs Lambda-Selected Predictors + 10-fold CV</h3>
+<pre class="r"><code>library(glmnet)
+Fdat &lt;- data
+Fdat &lt;- Fdat %&gt;% mutate(State = factor(State_Abbreviation)) %&gt;%
+ungroup(state_Abbreviation) %&gt;%
+select(-State_Abbreviation)
+fit_mod &lt;- glm(IS ~ -1 + PMHD + LE + Fem_Percent + POP + Majority_Females + State, data =
+Fdat)
+head(model.matrix(fit_mod))</code></pre>
+<pre><code>      PMHD       LE Fem_Percent      POP Majority_Females StateCA StateFL StateTX
+1 3.537173 81.49660   0.5030547 39536653                1       1       0       0
+2 3.345909 82.66174   0.5082324  1663190                1       1       0       0
+3 3.595121 80.38411   0.4604929    38626                0       1       0       0
+4 4.147860 77.82357   0.5054472   229294                1       1       0       0
+5 3.683956 79.75599   0.5017736    45670                1       1       0       0
+6 3.871949 79.98277   0.4883742    21805                0       1       0       0</code></pre>
+<pre class="r"><code>p &lt;- model.matrix(IS ~ -1 + ., data = Fdat)
+r &lt;- as.matrix(Fdat$IS)
+head(p)</code></pre>
+<pre><code>PMHD LE POP Fem_Percent Majority_Females PMHD_c Female_Percentage&lt;50%
+1 3.537173 81.49660 39536653 0.5030547 1 -0.22064869 0
+2 3.345909 82.66174 1663190 0.5082324 1 -0.41191242 0
+3 3.595121 80.38411 38626 0.4604929 0 -0.16270063 1
+4 4.147860 77.82357 229294 0.5054472 1 0.39003875 0
+5 3.683956 79.75599 45670 0.5017736 1 -0.07386556 0
+6 3.871949 79.98277 21805 0.4883742 0 0.11412716 1
+Female_Percentage&gt;=50% logit StateFL StateTX
+1 1 0.3780839 0 0
+2 1 0.4005490 0 0
+3 0 0.3712775 0 0
+4 1 0.3063549 0 0
+5 1 0.3608433 0 0
+6 0 0.3387624 0 0</code></pre>
+<pre class="r"><code>cv &lt;- cv.glmnet(p, r)
+lasso1 &lt;- glmnet(p, r, lambda = cv$lambda.1se)
+coef(lasso1)</code></pre>
+<pre><code>12 x 1 sparse Matrix of class &quot;dgCMatrix&quot;
+                                  s0
+(Intercept)             2.709125e-01
+PMHD                    3.029523e-02
+LE                      .           
+POP                     1.124103e-10
+Fem_Percent            -1.259784e-01
+Majority_Females        .           
+PMHD_c                  2.217067e-05
+Female_Percentage&lt;50%   .           
+Female_Percentage&gt;=50%  .           
+logit                   .           
+StateFL                 1.502342e-02
+StateTX                 .           </code></pre>
+<p>     This shows us that Fem_Percent, POP, PMHD, and whether the State is FL, are the most important predictors of IS. (I wish we would have run this before the previous steps because then I could have possibly tested the regression on variables that did have a significant effect, unlike what I found in #5, but I guess it’s also useful and interesting to know that there isn’t a good connection between those variables to make them good predictors.)</p>
+<pre class="r"><code>k = 10
+Fdat$StateFL &lt;- ifelse(Fdat$State == &quot;FL&quot;, 1, 0)
+data1 &lt;- Fdat[sample(nrow(Fdat)), ]
+folds &lt;- cut(seq(1:nrow(Fdat)), breaks = k, labels = F)
+
+diags &lt;- NULL
+for (i in 1:k) {
+    train &lt;- data1[folds != i, ]
+    test &lt;- data1[folds == i, ]
+    
+    fit123 &lt;- lm(IS ~ PMHD + POP + Fem_Percent + StateFL, data = train)
+    yhat &lt;- predict(fit123, newdata = test)
+    
+    diags &lt;- mean((test$IS - yhat)^2)
+}
+mean(diags)</code></pre>
+<pre><code>[1] 0.0002019926</code></pre>
+<pre class="r"><code>fit_all &lt;- lm(IS ~ ., data = Fdat)
+yhat2 &lt;- predict(fit_all)
+mean((Fdat$IS - yhat)^2)</code></pre>
+<pre><code>[1] 0.001226014</code></pre>
+<p>     The residual mean squared errors for the model using all predictors is equal to 0.001305947, which is greater than the MSE for model I used in the the 10-fold CV with only the variables that were retained as determined by the lasso regression, which was approximately 2.019926210^{-4}. But the value for the refined model varies every time you run it since our CV is randomly sampling. Since the MSE is lower, we can say our model is slightly better than when we use all the predictors. That there is more agreeance between the prediction and reality.</p>
+<p>…</p>
+</div>
+</div>
+</div>
+
+              <hr>
+              <div class="related-posts">
+                <h5>Related Posts</h5>
+                
+              </div>
+            </div>
+          </div>
+          <hr>
+        <div class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+
+    (function() {
+      
+      
+      if (window.location.hostname == "localhost")
+        return;
+
+      var disqus_shortname = '';
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+        </div>
+      </div>
+      
+    </div>
+
+    
+    <footer>
+  <div id="footer">
+    <div class="container">
+      <p class="text-muted">&copy; All rights reserved. Powered by <a href="https://gohugo.io/">Hugo</a> and
+      <a href="http://www.github.com/nurlansu/hugo-sustain/">sustain</a> with ♥</p>
+    </div>
+  </div>
+</footer>
+<div class="footer"></div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="/js/docs.min.js"></script>
+<script src="/js/main.js"></script>
+
+<script src="/js/ie10-viewport-bug-workaround.js"></script>
+
+
+    
+  </body>
+</html>

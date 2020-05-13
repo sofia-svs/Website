@@ -1,0 +1,464 @@
+---
+title: "Project 1"
+author: "Sofia Valdivieso-Sinyakov (sv23242)"
+output: pdf_document
+---
+
+
+
+<div id="data-wrangling-and-data-exploration" class="section level2">
+<h2>Data Wrangling and Data Exploration</h2>
+<div id="instructions" class="section level3">
+<h3>Instructions</h3>
+<p>A knitted R Markdown document (as a PDF) and the raw R Markdown file (as .Rmd) should both be submitted to Canvas by 11:59pm on 3/8/2020. These two documents will be graded jointly, so they must be consistent (i.e., don’t change the R Markdown file without also updating the knitted document).</p>
+</div>
+<div id="find-dataintroduction" class="section level3">
+<h3>Find data/Introduction:</h3>
+<p>The original dataset I chose has 3,191 observations and 534 Variables stemming from many different national data servers. I selected for 6 particular variables. Each observation is labeled by a unique digit code, which I used later as the primary key to join the two self-made portions of the dataset back into one. The digit code was created for the dataset to label each unique observation. Each observation contains the population of a particular city (not selected for/identified here but sourced from the Census Population Estimates) within a state in the US, and the percentage of that population that experienced insufficient sleep (data sourced from the Behavioral Risk Factor Surveillance System). I also selected the average life expectancy for such populations (sourced from the National Center for Health Statistics) and the average number of poor mental health days they experienced (sourced from the Behavioral Risk Factor Surveillance System).</p>
+<p>The topic of mental health has always been of great interest to me, especially since I’ve personally had to deal with quite a few challenges myself and am well familiar with their impact in daily life, however, since I’ve been taking a sleep science class, and have always been curious as to sleep’s relationship to mental help, I was hoping to explore data relating the two, and the general prevelance in the US. I expected to see a positive correlation between the percentage of people obtaining insufficient amounts of sleep and the average number of poor mental health days, as well as a negative correlation with the expected life expectancy because I feel that sleep plays a partially resorative role in a person’s life, and chronic stress can lessen a body’s ability to be resiliant. Overall I expected the northern states to have less sufficient sleep due to living in more industrial societies, so on average they would have poorer health.</p>
+<p>In the future, since this particular dataset has so many variables that may play important factors in a person’s life, it would be interesting to see if more variables could be analyzed as they may be possibly confounding the variables and influencing the appeared correlations.</p>
+<pre class="r"><code>library(readxl)
+sleep_and_health_issues &lt;- read_excel(&quot;C:\\Users\\sofia\\Desktop\\SDS 348\\Project 1\\sleep_and_health_issues.xlsx&quot;)
+library(tidyverse)
+library(dplyr)
+library(datasets)
+head(sleep_and_health_issues)</code></pre>
+<pre><code>## # A tibble: 6 x 534
+##   `State FIPS Cod~ `County FIPS Co~ Digit_FIPS_Code State_Abbreviat~ Name 
+##              &lt;dbl&gt;            &lt;dbl&gt;           &lt;dbl&gt; &lt;chr&gt;            &lt;chr&gt;
+## 1                1                0            1000 AL               Alab~
+## 2                1                1            1001 AL               Auta~
+## 3                1                3            1003 AL               Bald~
+## 4                1                5            1005 AL               Barb~
+## 5                1                7            1007 AL               Bibb~
+## 6                1                9            1009 AL               Blou~
+## # ... with 529 more variables: `Release Year` &lt;dbl&gt;, `County Ranked
+## #   (Yes=1/No=0)` &lt;dbl&gt;, `Premature death raw value` &lt;dbl&gt;, `Premature death
+## #   numerator` &lt;dbl&gt;, `Premature death denominator` &lt;dbl&gt;, `Premature death CI
+## #   low` &lt;dbl&gt;, `Premature death CI high` &lt;dbl&gt;, `Premature death
+## #   (Black)` &lt;dbl&gt;, `Premature death (Hispanic)` &lt;dbl&gt;, `Premature death
+## #   (White)` &lt;dbl&gt;, `Poor or fair health raw value` &lt;dbl&gt;, `Poor or fair health
+## #   numerator` &lt;lgl&gt;, `Poor or fair health denominator` &lt;lgl&gt;, `Poor or fair
+## #   health CI low` &lt;dbl&gt;, `Poor or fair health CI high` &lt;dbl&gt;, `Poor physical
+## #   health days raw value` &lt;dbl&gt;, `Poor physical health days numerator` &lt;lgl&gt;,
+## #   `Poor physical health days denominator` &lt;lgl&gt;, `Poor physical health days
+## #   CI low` &lt;dbl&gt;, `Poor physical health days CI high` &lt;dbl&gt;,
+## #   Poor_mental_health_days_raw_value &lt;dbl&gt;, `Poor mental health days
+## #   numerator` &lt;lgl&gt;, `Poor mental health days denominator` &lt;lgl&gt;, `Poor mental
+## #   health days CI low` &lt;dbl&gt;, `Poor mental health days CI high` &lt;dbl&gt;, `Low
+## #   birthweight raw value` &lt;dbl&gt;, `Low birthweight numerator` &lt;dbl&gt;, `Low
+## #   birthweight denominator` &lt;dbl&gt;, `Low birthweight CI low` &lt;dbl&gt;, `Low
+## #   birthweight CI high` &lt;dbl&gt;, `Low birthweight (Black)` &lt;dbl&gt;, `Low
+## #   birthweight (Hispanic)` &lt;dbl&gt;, `Low birthweight (White)` &lt;dbl&gt;, `Adult
+## #   smoking raw value` &lt;dbl&gt;, `Adult smoking numerator` &lt;lgl&gt;, `Adult smoking
+## #   denominator` &lt;lgl&gt;, `Adult smoking CI low` &lt;dbl&gt;, `Adult smoking CI
+## #   high` &lt;dbl&gt;, `Adult obesity raw value` &lt;dbl&gt;, `Adult obesity
+## #   numerator` &lt;dbl&gt;, `Adult obesity denominator` &lt;dbl&gt;, `Adult obesity CI
+## #   low` &lt;dbl&gt;, `Adult obesity CI high` &lt;dbl&gt;, `Food environment index raw
+## #   value` &lt;dbl&gt;, `Food environment index numerator` &lt;dbl&gt;, `Food environment
+## #   index denominator` &lt;dbl&gt;, `Food environment index CI low` &lt;lgl&gt;, `Food
+## #   environment index CI high` &lt;lgl&gt;, `Physical inactivity raw value` &lt;dbl&gt;,
+## #   `Physical inactivity numerator` &lt;dbl&gt;, `Physical inactivity
+## #   denominator` &lt;dbl&gt;, `Physical inactivity CI low` &lt;dbl&gt;, `Physical
+## #   inactivity CI high` &lt;dbl&gt;, `Access to exercise opportunities raw
+## #   value` &lt;dbl&gt;, `Access to exercise opportunities numerator` &lt;dbl&gt;, `Access
+## #   to exercise opportunities denominator` &lt;dbl&gt;, `Access to exercise
+## #   opportunities CI low` &lt;lgl&gt;, `Access to exercise opportunities CI
+## #   high` &lt;lgl&gt;, `Excessive drinking raw value` &lt;dbl&gt;, `Excessive drinking
+## #   numerator` &lt;lgl&gt;, `Excessive drinking denominator` &lt;lgl&gt;, `Excessive
+## #   drinking CI low` &lt;dbl&gt;, `Excessive drinking CI high` &lt;dbl&gt;,
+## #   `Alcohol-impaired driving deaths raw value` &lt;dbl&gt;, `Alcohol-impaired
+## #   driving deaths numerator` &lt;dbl&gt;, `Alcohol-impaired driving deaths
+## #   denominator` &lt;dbl&gt;, `Alcohol-impaired driving deaths CI low` &lt;dbl&gt;,
+## #   `Alcohol-impaired driving deaths CI high` &lt;dbl&gt;, `Sexually transmitted
+## #   infections raw value` &lt;dbl&gt;, `Sexually transmitted infections
+## #   numerator` &lt;dbl&gt;, `Sexually transmitted infections denominator` &lt;dbl&gt;,
+## #   `Sexually transmitted infections CI low` &lt;lgl&gt;, `Sexually transmitted
+## #   infections CI high` &lt;lgl&gt;, `Teen births raw value` &lt;dbl&gt;, `Teen births
+## #   numerator` &lt;dbl&gt;, `Teen births denominator` &lt;dbl&gt;, `Teen births CI
+## #   low` &lt;dbl&gt;, `Teen births CI high` &lt;dbl&gt;, `Teen births (Black)` &lt;dbl&gt;, `Teen
+## #   births (Hispanic)` &lt;dbl&gt;, `Teen births (White)` &lt;dbl&gt;, `Uninsured raw
+## #   value` &lt;dbl&gt;, `Uninsured numerator` &lt;dbl&gt;, `Uninsured denominator` &lt;dbl&gt;,
+## #   `Uninsured CI low` &lt;dbl&gt;, `Uninsured CI high` &lt;dbl&gt;, `Primary care
+## #   physicians raw value` &lt;dbl&gt;, `Primary care physicians numerator` &lt;dbl&gt;,
+## #   `Primary care physicians denominator` &lt;dbl&gt;, `Primary care physicians CI
+## #   low` &lt;lgl&gt;, `Primary care physicians CI high` &lt;lgl&gt;, `Ratio of population
+## #   to primary care physicians.` &lt;dbl&gt;, `Dentists raw value` &lt;dbl&gt;, `Dentists
+## #   numerator` &lt;dbl&gt;, `Dentists denominator` &lt;dbl&gt;, `Dentists CI low` &lt;lgl&gt;,
+## #   `Dentists CI high` &lt;lgl&gt;, `Ratio of population to dentists.` &lt;dbl&gt;, `Mental
+## #   health providers raw value` &lt;dbl&gt;, `Mental health providers
+## #   numerator` &lt;dbl&gt;, ...</code></pre>
+</div>
+<div id="guidelinestidying" class="section level3">
+<h3>Guidelines/Tidying</h3>
+<p>My dataset was already tidy, but here I organised it a bit further by renaming the chosen variables to a more self-explanatory name.</p>
+<pre class="r"><code>data &lt;- sleep_and_health_issues %&gt;% select(&quot;Digit_FIPS_Code&quot;, 
+    &quot;State_Abbreviation&quot;, &quot;Poor_mental_health_days_raw_value&quot;, 
+    &quot;Life_expectancy_raw_value&quot;, &quot;Insufficient_sleep_raw_value&quot;, 
+    &quot;Population_raw_value&quot;) %&gt;% rename(Digit_Code = Digit_FIPS_Code, 
+    PMHD = Poor_mental_health_days_raw_value, LE = Life_expectancy_raw_value, 
+    IS = Insufficient_sleep_raw_value, POP = Population_raw_value, 
+    State_Abbreviation = State_Abbreviation)
+glimpse(data)</code></pre>
+<pre><code>## Observations: 3,193
+## Variables: 6
+## $ Digit_Code         &lt;dbl&gt; 1000, 1001, 1003, 1005, 1007, 1009, 1011, 1013, ...
+## $ State_Abbreviation &lt;chr&gt; &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, ...
+## $ PMHD               &lt;dbl&gt; 4.577367, 4.306739, 4.249649, 4.634994, 4.315710...
+## $ LE                 &lt;dbl&gt; 75.41303, 76.33059, 78.59950, 75.77946, 73.92827...
+## $ IS                 &lt;dbl&gt; 0.3772095, 0.3590541, 0.3330587, 0.3856317, 0.38...
+## $ POP                &lt;dbl&gt; 4874747, 55504, 212628, 25270, 22668, 58013, 103...</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Join your 2+ separate data sources into a single dataset</li>
+</ol>
+<p>I split the original data set into two: one containing the primary key, digit code, the state abbreviation of the state correlated to the city being measure, with the associated average number of poor mental health days and life expectancy, and the other with the remaining two unique variables (percentage of the population obtaining insufficient amounts of sleep, and the population of the city in question) in addition to the pimrary key (digit code).</p>
+<p>I used full_join because it would result in having the same number of rows equal to union of IDs (digit code), which was a given as the primary key was shared in both dataset parts and each were a part of their original observation anyways, so all original data was retained and no rows would be dropped.</p>
+<pre class="r"><code>part1 &lt;- data %&gt;% select(Digit_Code, State_Abbreviation, PMHD, 
+    LE)
+part2 &lt;- data %&gt;% select(Digit_Code, IS, POP)
+joinedData &lt;- full_join(part1, part2, by = &quot;Digit_Code&quot;)
+glimpse(joinedData)</code></pre>
+<pre><code>## Observations: 3,193
+## Variables: 6
+## $ Digit_Code         &lt;dbl&gt; 1000, 1001, 1003, 1005, 1007, 1009, 1011, 1013, ...
+## $ State_Abbreviation &lt;chr&gt; &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, &quot;AL&quot;, ...
+## $ PMHD               &lt;dbl&gt; 4.577367, 4.306739, 4.249649, 4.634994, 4.315710...
+## $ LE                 &lt;dbl&gt; 75.41303, 76.33059, 78.59950, 75.77946, 73.92827...
+## $ IS                 &lt;dbl&gt; 0.3772095, 0.3590541, 0.3330587, 0.3856317, 0.38...
+## $ POP                &lt;dbl&gt; 4874747, 55504, 212628, 25270, 22668, 58013, 103...</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Create summary statistics</li>
+</ol>
+<p>Firstly I created a new variable named Sleepless_Wonders to describe the number of people obtaining insufficient amounts of sleep out of the population of people reported per city/observation.</p>
+<pre class="r"><code>organizzzed &lt;- joinedData %&gt;% group_by(State_Abbreviation) %&gt;% 
+    select(3:6) %&gt;% summarize_all(mean, na.rm = T) %&gt;% arrange(PMHD) %&gt;% 
+    mutate(Sleepless_Wonders = (IS * POP))
+organizzzed</code></pre>
+<pre><code>## # A tibble: 51 x 6
+##    State_Abbreviation  PMHD    LE    IS     POP Sleepless_Wonders
+##    &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;             &lt;dbl&gt;
+##  1 ND                  2.82  79.5 0.280  27978.             7845.
+##  2 MN                  3.04  80.3 0.291 126741.            36869.
+##  3 SD                  3.05  77.8 0.262  25960.             6797.
+##  4 NE                  3.08  79.4 0.278  40853.            11365.
+##  5 HI                  3.21  81.9 0.399 475846            189748.
+##  6 IA                  3.24  79.3 0.274  62914.            17242.
+##  7 KS                  3.29  77.8 0.295  54965.            16222.
+##  8 MT                  3.45  78.4 0.273  36859.            10047.
+##  9 WY                  3.47  79.4 0.298  48276.            14364.
+## 10 CO                  3.54  80.8 0.269 172528.            46476.
+## # ... with 41 more rows</code></pre>
+<p>Second, I filtered the data to find the statistical values relating to our home, Texas.</p>
+<pre class="r"><code>texas_is_special &lt;- organizzzed %&gt;% filter(State_Abbreviation == 
+    &quot;TX&quot;)
+texas_is_special</code></pre>
+<pre><code>## # A tibble: 1 x 6
+##   State_Abbreviation  PMHD    LE    IS     POP Sleepless_Wonders
+##   &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;             &lt;dbl&gt;
+## 1 TX                  3.64  77.4 0.318 221997.            70546.</code></pre>
+<p>Continuing on I conducted a variety of summary statistics, calculating the min, max, variance, and standard deviation for the numeric variables. Summary was run at the top to obtain the min, max, median, mean, and the first and third quartile. However these values can also be elicited through the summarize_all function, where I called four of such functions at once. The values were called seperately for the two groups of columns so that all the values would fit on the page.</p>
+<pre class="r"><code>summary(joinedData)</code></pre>
+<pre><code>##    Digit_Code    State_Abbreviation      PMHD             LE       
+##  Min.   : 1000   Length:3193        Min.   :2.440   Min.   :62.44  
+##  1st Qu.:18173   Class :character   1st Qu.:3.493   1st Qu.:75.52  
+##  Median :29175   Mode  :character   Median :3.932   Median :77.57  
+##  Mean   :30361                      Mean   :3.932   Mean   :77.46  
+##  3rd Qu.:45075                      3rd Qu.:4.348   3rd Qu.:79.32  
+##  Max.   :56045                      Max.   :5.964   Max.   :97.97  
+##                                                     NA&#39;s   :69     
+##        IS              POP          
+##  Min.   :0.2303   Min.   :      88  
+##  1st Qu.:0.3004   1st Qu.:   11134  
+##  Median :0.3299   Median :   26484  
+##  Mean   :0.3306   Mean   :  204021  
+##  3rd Qu.:0.3613   3rd Qu.:   72564  
+##  Max.   :0.4671   Max.   :39536653  
+## </code></pre>
+<pre class="r"><code>joinedData %&gt;% group_by(State_Abbreviation) %&gt;% select(3:4) %&gt;% 
+    summarize_all(funs(min, max, var, sd), na.rm = T)</code></pre>
+<pre><code>## # A tibble: 51 x 9
+##    State_Abbreviat~ PMHD_min LE_min PMHD_max LE_max PMHD_var LE_var PMHD_sd
+##    &lt;chr&gt;               &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+##  1 AK                   2.57   67.2     5.88   92.5  0.607   27.4    0.779 
+##  2 AL                   3.86   70.2     5.34   80.4  0.0887   2.87   0.298 
+##  3 AR                   4.14   70.6     5.35   79.6  0.0550   2.78   0.235 
+##  4 AZ                   3.67   72.4     5.50   83.2  0.281    9.70   0.530 
+##  5 CA                   2.90   74.5     4.37   90.0  0.115    7.64   0.340 
+##  6 CO                   2.93   74.5     4.38   98.0  0.110   18.5    0.332 
+##  7 CT                   3.21   78.8     4.04   82.6  0.0841   1.21   0.290 
+##  8 DC                   3.54   78.4     3.54   78.4  0        0      0     
+##  9 DE                   3.63   77.8     3.76   78.7  0.00298  0.159  0.0546
+## 10 FL                   3.33   68.0     4.75   85.9  0.103    7.67   0.321 
+## # ... with 41 more rows, and 1 more variable: LE_sd &lt;dbl&gt;</code></pre>
+<pre class="r"><code>joinedData %&gt;% group_by(State_Abbreviation) %&gt;% select(5:6) %&gt;% 
+    summarize_all(funs(min, max, var, sd), na.rm = T)</code></pre>
+<pre><code>## # A tibble: 51 x 9
+##    State_Abbreviati~ IS_min POP_min IS_max POP_max  IS_var POP_var  IS_sd POP_sd
+##    &lt;chr&gt;              &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+##  1 AK                 0.281     605  0.376  7.40e5 7.22e-4 2.03e10 0.0269 1.42e5
+##  2 AL                 0.333    8330  0.459  4.87e6 7.87e-4 3.50e11 0.0281 5.92e5
+##  3 AR                 0.296    5247  0.400  3.00e6 5.43e-4 1.19e11 0.0233 3.45e5
+##  4 AZ                 0.293    9455  0.355  7.02e6 4.27e-4 3.79e12 0.0207 1.95e6
+##  5 CA                 0.269    1120  0.374  3.95e7 6.25e-4 2.77e13 0.0250 5.27e6
+##  6 CO                 0.230     715  0.331  5.61e6 4.84e-4 5.00e11 0.0220 7.07e5
+##  7 CT                 0.289  116359  0.353  3.59e6 3.99e-4 1.22e12 0.0200 1.10e6
+##  8 DC                 0.362  693972  0.362  6.94e5 0.      0.      0      0.    
+##  9 DE                 0.319  176824  0.368  9.62e5 6.11e-4 1.32e11 0.0247 3.63e5
+## 10 FL                 0.254    8242  0.410  2.10e7 9.97e-4 6.53e12 0.0316 2.55e6
+## # ... with 41 more rows</code></pre>
+<p>Grouping by state, I was able to count the number of observations that fit for each, which revealed that Texas had a disproportionally large amount of data contributing to its means (155) in comparison to a state such as Delaware (4).</p>
+<pre class="r"><code>joinedData %&gt;% select(State_Abbreviation, Digit_Code) %&gt;% group_by(State_Abbreviation) %&gt;% 
+    summarize(count = n()) %&gt;% arrange(desc(count))</code></pre>
+<pre><code>## # A tibble: 51 x 2
+##    State_Abbreviation count
+##    &lt;chr&gt;              &lt;int&gt;
+##  1 TX                   255
+##  2 GA                   160
+##  3 VA                   134
+##  4 KY                   121
+##  5 MO                   116
+##  6 KS                   106
+##  7 IL                   103
+##  8 NC                   101
+##  9 IA                   100
+## 10 TN                    96
+## # ... with 41 more rows</code></pre>
+<p>The third quartile for the numeric columns showed teh middle value between the median and the highest value of the data set where 75% of the data was contained below the reported value. So the majority of people experienced less than 5 days of poor mental health, with an average life expectancy of around 79 years. And about 36% of the average population (72235.5 people) experience insufficient sleep.</p>
+<pre class="r"><code>joinedData %&gt;% select(3:6) %&gt;% summarize_if(is.numeric, list(Q3 = quantile), 
+    probs = 0.75, na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##   PMHD_Q3 LE_Q3 IS_Q3 POP_Q3
+##     &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1    4.35  79.3 0.361  72564</code></pre>
+<p>The mean number of days for a person from the states to experience poor mental health is about 3.9 days. The mean life expectancy is calculated to be about 77.5 years, and on average 33% of the mean population of 203713.7 people experience insufficient sleep.</p>
+<pre class="r"><code>joinedData %&gt;% select(3:6) %&gt;% summarize_all(funs(mean), na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##    PMHD    LE    IS     POP
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1  3.93  77.5 0.331 204021.</code></pre>
+<p>There were 3191 distinct values for number of poor mental health days, 3122 distinct values for life expectancy, 3191 distinct percentages of observation population values and 3135 distinct population sizes in my dataset.</p>
+<pre class="r"><code>joinedData %&gt;% select(3:6) %&gt;% summarize_all(funs(n_distinct), 
+    na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##    PMHD    LE    IS   POP
+##   &lt;int&gt; &lt;int&gt; &lt;int&gt; &lt;int&gt;
+## 1  3192  3123  3192  3136</code></pre>
+<p>The median for number of poor mental health days is 3.94 days. The median life expectancy is 77.57 years, median population being 26476 people, and the median of percents of the populations obtaining insufficient sleep being about 32.96%.</p>
+<pre class="r"><code>joinedData %&gt;% select(3:6) %&gt;% summarize_all(funs(median), na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##    PMHD    LE    IS   POP
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1  3.93  77.6 0.330 26484</code></pre>
+<p>The inter-quartile range for each numeric column described teh statistical dispersion, or middle difference of value between the 75th and 25th quartiles. The fact that the poor mental health days, life expectancy, and insufficient sleep variables had relatively low values shows you that a fairly large portion of the observations had similar values, which could possibly mean they’re controlled by a common environmental factor.</p>
+<pre class="r"><code>joinedData %&gt;% select(3:6) %&gt;% summarize_all(funs(IQR), na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##    PMHD    LE     IS   POP
+##   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt; &lt;dbl&gt;
+## 1 0.855  3.80 0.0609 61430</code></pre>
+<p>The median absolute deviation value for each numeric column shows the variability of a univariate sample of quantitative data.The low values are consistent with my previous hypothesis statement.</p>
+<pre class="r"><code>joinedData %&gt;% select(3:6) %&gt;% summarize_all(funs(mad), na.rm = T)</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##    PMHD    LE     IS    POP
+##   &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 0.634  2.81 0.0453 28623.</code></pre>
+<p>By pivoting longer I was able to globalize the data observation points to find the mean for each of the numeric variables across all states and observations. I removed all NA values after ungrouping by the state abbreviation and regrouping by the variables. Finally I summarized the mean of each of the values.</p>
+<pre class="r"><code>joinedData_pivoting_longer &lt;- joinedData %&gt;% pivot_longer(3:6, 
+    names_to = &quot;Variables&quot;, values_to = &quot;Values&quot;) %&gt;% ungroup(State_Abbreviation) %&gt;% 
+    group_by(Variables) %&gt;% na.omit %&gt;% summarise(mean(Values))
+joinedData_pivoting_longer</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   Variables `mean(Values)`
+##   &lt;chr&gt;              &lt;dbl&gt;
+## 1 IS                 0.331
+## 2 LE                77.5  
+## 3 PMHD               3.93 
+## 4 POP           204021.</code></pre>
+<p>I then pivoted wider to help format and put the variables lined up in the columns.</p>
+<pre class="r"><code>joinedData_pivoting_wider &lt;- joinedData_pivoting_longer %&gt;% pivot_wider(names_from = &quot;Variables&quot;, 
+    values_from = &quot;mean(Values)&quot;)
+joinedData_pivoting_wider</code></pre>
+<pre><code>## # A tibble: 1 x 4
+##      IS    LE  PMHD     POP
+##   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1 0.331  77.5  3.93 204021.</code></pre>
+<p>The correlation matrix between the number of poor mental health days an individual has and the percentage of days that they have insufficient sleep ended up having a reasonably strong positive correlation, meaning that with an increase in the percentage of people obtaining insufficient sleep, there was a rise in the average number of poor mental health days expereienced.</p>
+<pre class="r"><code>joinedData %&gt;% na.omit %&gt;% summarize(cor(PMHD, IS))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   `cor(PMHD, IS)`
+##             &lt;dbl&gt;
+## 1           0.683</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Make visualizations (three plots)</li>
+</ol>
+<p>The correlation heatmap between the numeric variables reveals that, excludind correlations between same variables, the two variables that shared the strongest correlation were the number of poor mental health days, and the percentage of people getting insufficient sleep, and was postive, The weakest correlation was a negative one between the population size and the number of poor mental health days. Though there was a fairly strong negative correlation between life expectancy and poor mental health days, which is understandable, and yet another similarly strong negative correlation between life expectancy and insufficient sleep.</p>
+<pre class="r"><code># Correlation heatmap of numeric variables.
+CM &lt;- joinedData %&gt;% na.omit %&gt;% select_if(is.numeric) %&gt;% select(-Digit_Code)
+cor(CM)</code></pre>
+<pre><code>##             PMHD          LE          IS         POP
+## PMHD  1.00000000 -0.63503161  0.68316393 -0.03291653
+## LE   -0.63503161  1.00000000 -0.52359685  0.09413531
+## IS    0.68316393 -0.52359685  1.00000000  0.04818549
+## POP  -0.03291653  0.09413531  0.04818549  1.00000000</code></pre>
+<pre class="r"><code>tidycor &lt;- cor(CM) %&gt;% as.data.frame %&gt;% rownames_to_column %&gt;% 
+    pivot_longer(-1, names_to = &quot;name&quot;, values_to = &quot;correlation&quot;)
+tidycor</code></pre>
+<pre><code>## # A tibble: 16 x 3
+##    rowname name  correlation
+##    &lt;chr&gt;   &lt;chr&gt;       &lt;dbl&gt;
+##  1 PMHD    PMHD       1     
+##  2 PMHD    LE        -0.635 
+##  3 PMHD    IS         0.683 
+##  4 PMHD    POP       -0.0329
+##  5 LE      PMHD      -0.635 
+##  6 LE      LE         1     
+##  7 LE      IS        -0.524 
+##  8 LE      POP        0.0941
+##  9 IS      PMHD       0.683 
+## 10 IS      LE        -0.524 
+## 11 IS      IS         1     
+## 12 IS      POP        0.0482
+## 13 POP     PMHD      -0.0329
+## 14 POP     LE         0.0941
+## 15 POP     IS         0.0482
+## 16 POP     POP        1</code></pre>
+<pre class="r"><code>tidycor %&gt;% ggplot(aes(rowname, name, fill = correlation)) + 
+    geom_tile() + scale_fill_gradient2(low = &quot;purple&quot;, mid = &quot;white&quot;, 
+    high = &quot;pink&quot;) + geom_text(aes(label = round(correlation, 
+    2)), color = &quot;black&quot;, size = 5) + theme(axis.text.x = element_text(angle = 90, 
+    hjust = 1, vjust = 0.5)) + coord_fixed() + ggtitle(&quot;Correlation Heatmap Between \n Numeric Variables&quot;) + 
+    theme(plot.title = element_text(hjust = 0.5)) + ylab(&quot;Variables&quot;) + 
+    xlab(&quot;Variables&quot;)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-17-1.png" width="672" style="display: block; margin: auto;" />
+The first plot was split into 3 bar charts because my categorical variable has 50 categories, so I figured it was easier to visualize when separated a bit out. I explored the relationship between life expectancy and population within each state. There appears to be no correlation at all because states who have some of the largest populations have similar life expectancies as those with smaller ones, and they are spread over the entire restulting range. The reason I decided to compare these variables was because I hypothesized that states with a larger population would most likely have a more establish healthcare infrastructure which would lead to an increased life expectancy.</p>
+<pre class="r"><code># Plot 1
+statesAK &lt;- joinedData %&gt;% slice(1:1130) %&gt;% select(State_Abbreviation, 
+    LE, POP) %&gt;% group_by(State_Abbreviation) %&gt;% na.omit
+statesAK2 &lt;- statesAK %&gt;% summarize(LE_MEan = mean(LE, na.rm = T), 
+    POP_Sum = sum(POP, na.rm = T))
+statesLN &lt;- joinedData %&gt;% slice(1131:1922) %&gt;% select(State_Abbreviation, 
+    LE, POP) %&gt;% group_by(State_Abbreviation) %&gt;% na.omit
+statesLN2 &lt;- statesLN %&gt;% summarize(LE_MEan = mean(LE, na.rm = T), 
+    POP_Sum = sum(POP, na.rm = T))
+statesOW &lt;- joinedData %&gt;% slice(1923:3192) %&gt;% select(State_Abbreviation, 
+    LE, POP) %&gt;% group_by(State_Abbreviation) %&gt;% na.omit
+statesOW2 &lt;- statesOW %&gt;% summarize(LE_MEan = mean(LE, na.rm = T), 
+    POP_Sum = sum(POP, na.rm = T))
+
+ggplot(statesAK2, aes(x = State_Abbreviation, y = LE_MEan)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) + 
+    geom_bar(aes(fill = POP_Sum), stat = &quot;summary&quot;) + ggtitle(&quot;Life Expectancy vs State by Populations&quot;) + 
+    ylab(&quot;Mean Life Expectancy (years)&quot;) + xlab(&quot;State Abbreviation&quot;) + 
+    theme(plot.title = element_text(hjust = 0.5)) + scale_fill_gradient(low = &quot;blue&quot;, 
+    high = &quot;red&quot;, na.value = NA)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-18-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(statesLN2, aes(x = State_Abbreviation, y = LE_MEan)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) + 
+    geom_bar(aes(fill = POP_Sum), stat = &quot;summary&quot;) + ggtitle(&quot;Life Expectancy vs State by Populations&quot;) + 
+    ylab(&quot;Mean Life Expectancy (years)&quot;) + xlab(&quot;State Abbreviation&quot;) + 
+    theme(plot.title = element_text(hjust = 0.5)) + scale_fill_gradient(low = &quot;blue&quot;, 
+    high = &quot;red&quot;, na.value = NA)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-18-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(statesOW2, aes(x = State_Abbreviation, y = LE_MEan)) + 
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5)) + 
+    geom_bar(aes(fill = POP_Sum), stat = &quot;summary&quot;) + ggtitle(&quot;Life Expectancy vs State by Populations&quot;) + 
+    ylab(&quot;Mean Life Expectancy (years)&quot;) + xlab(&quot;State Abbreviation&quot;) + 
+    theme(plot.title = element_text(hjust = 0.5)) + scale_fill_gradient(low = &quot;blue&quot;, 
+    high = &quot;red&quot;, na.value = NA)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-18-3.png" width="672" style="display: block; margin: auto;" />
+The next plot I also split into multiple parts due to having too many categories. I compared the percentage of people obtaining insufficient amounts of sleep with the amount of poor mental health days per state. Overall there was an overwhelmingly obvious positive correlation amongst all the states showing that those who had less sleep (increase in insufficient sleep) had an increase in poor mental health days experienced. Since the states were color coded, you can see how the observations tended to cluster around certain values per state, which would make it slightly harder to visualize the correlation individually, however we can see that certain states have overall lower levels of both, like South Dakota, versus having overal higher levels for both like West Virigina or Kentucky. As a thought experience, I also added another layer of variables and included the population size per observation in the second graph, represented by the size of the points to see if there were any correlations between which states would have these lower correlations between sleep and mental health. But again none was found.</p>
+<pre class="r"><code># Plot 2
+library(ggplot2)
+library(dplyr)
+statesAG &lt;- joinedData %&gt;% slice(1:556) %&gt;% mutate(Insufficient_Sleepers = (IS * 
+    POP)) %&gt;% select(State_Abbreviation, IS, PMHD, Insufficient_Sleepers)
+statesHMD &lt;- joinedData %&gt;% slice(557:1237) %&gt;% mutate(Insufficient_Sleepers = (IS * 
+    POP)) %&gt;% select(State_Abbreviation, IS, PMHD, Insufficient_Sleepers, 
+    POP)
+statesMNJ &lt;- joinedData %&gt;% slice(1238:1825) %&gt;% mutate(Insufficient_Sleepers = (IS * 
+    POP)) %&gt;% select(State_Abbreviation, IS, PMHD, Insufficient_Sleepers)
+statesNSC &lt;- joinedData %&gt;% slice(1826:2402) %&gt;% mutate(Insufficient_Sleepers = (IS * 
+    POP)) %&gt;% select(State_Abbreviation, IS, PMHD, Insufficient_Sleepers)
+statesSDW &lt;- joinedData %&gt;% slice(2403:3192) %&gt;% mutate(Insufficient_Sleepers = (IS * 
+    POP)) %&gt;% select(State_Abbreviation, IS, PMHD, Insufficient_Sleepers)
+
+ggplot(statesAG, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbreviation), 
+    ) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
+    ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
+    scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(2.5, 
+        3.5, 4.5, 5.5)) + theme(plot.title = element_text(hjust = 0.5)) + 
+    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(statesHMD, aes(PMHD, IS, size = POP)) + geom_point(mapping = aes(color = State_Abbreviation), 
+    ) + scale_size(range = c(0.1, 12), name = &quot;Population&quot;) + 
+    ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
+    ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
+    scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(3, 
+        4, 5)) + theme(plot.title = element_text(hjust = 0.5)) + 
+    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(statesMNJ, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbreviation), 
+    ) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
+    ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
+    scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(3, 
+        4, 5)) + theme(plot.title = element_text(hjust = 0.5)) + 
+    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-3.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(statesNSC, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbreviation), 
+    ) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
+    ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
+    scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(2.5, 
+        3.5, 4.5, 5.5)) + theme(plot.title = element_text(hjust = 0.5)) + 
+    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-4.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(statesSDW, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbreviation), 
+    ) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
+    ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
+    scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(2.5, 
+        3.5, 4.5, 5.5)) + theme(plot.title = element_text(hjust = 0.5)) + 
+    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-5.png" width="672" style="display: block; margin: auto;" /></p>
+<ol start="5" style="list-style-type: decimal">
+<li>Perform k-means/PAM clustering or PCA on (at least) your numeric variables.</li>
+</ol>
+<p>We want to determine how mnay clusters to pick. To do so we want to first create a new vector array to hold the data results, which we iterate from 2 to 10, placing the value in “i” so that the i position of the vector array is set to the selected data as its ran through pam(k=i, diss=T). Essentially we are computing the WSS for the range of cluster counts by using the for-loop. The daisy function creates the dissimilarity matrix, which is determined by the number of clusters at each point, and since it is a distanct function in the cluster package, we are able to calculate the gower dissimilarities, or the “distance” between two units. Once we have the distanct measure, we want to compare and see how the observations group together in space defined by our variables, so we plot the within-cluster SS (WSS or silwidth) against the number of clusters k.
+The plot below reveals that the highest point is at x=2, which means that we should pick two clusters with PAM because at that point the clusters have the best ratio of having distance between clusters medoids and the smallest within-cluster distance. The reason we calculate the silhouette width to calculate the number of clusters we want to compare is because it indexes how well the points are assigned to the cluster so that the higher width means the more cohesive the cluster is, which is what is desired.</p>
+<pre class="r"><code>library(cluster)
+library(GGally)
+
+silwidth &lt;- vector()
+for (i in 2:10) {
+    silwidth[i] &lt;- (joinedData %&gt;% select(3:6) %&gt;% daisy(&quot;gower&quot;) %&gt;% 
+        pam(k = i, diss = T))$silinfo$avg.width
+}
+ggplot() + geom_path(aes(x = 2:10, y = silwidth[2:10])) + theme(plot.title = element_text(hjust = 0.5)) + 
+    ggtitle(&quot;PAM k clusters vs Silhouette width&quot;) + ylab(&quot;Silhouette Width&quot;) + 
+    xlab(&quot;k clusters&quot;)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-20-1.png" width="672" style="display: block; margin: auto;" />
+We then visualize all the pairwise combinations between our four variables. Using the two clusters in PAM we are able to analyze the correlations between each pairwise combination and compairison in numeric and graph form. The strongest correlation is positive and is between insufficient sleep and poor mental health days. The weakest is negative and is between population and insufficient sleep.The two colors present correlate to each of the two clusters’ data. Without the color its hard to differentiate the two clusters due to a large amount of overlap.</p>
+<pre class="r"><code>fdataclust &lt;- joinedData %&gt;% select(3:6) %&gt;% pam(k = 2)
+joinedData %&gt;% ggpairs(columns = 3:6)</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-21-1.png" width="672" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>joinedData %&gt;% mutate(cluster = as.factor(fdataclust$clustering)) %&gt;% 
+    ggpairs(columns = 3:6, aes(color = cluster))</code></pre>
+<p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-21-2.png" width="672" style="display: block; margin: auto;" />
+The first line describes the medoids, or the center value of each of the cluster in relation to each of the four numeric variables. Then to find the final medoids we slide the data to see which states were most representative of the clusters which turned out to be Tennessee for cluster 1 and Virginia for cluster 2. The average width was 0.9734386 which means that a strong structure has been found overall, and individuall, there was no substantial structrue found for cluster one with an average silhouette width of 0.1905604 and a strong structure for cluster two with a value of 0.9816194.</p>
+<pre class="r"><code>fdataclust$medoids</code></pre>
+<pre><code>##          PMHD       LE        IS     POP
+## [1,] 4.474207 76.08961 0.3644098 6715984
+## [2,] 3.145499 77.22211 0.3545547   25872</code></pre>
+<pre class="r"><code>joinedData %&gt;% slice(fdataclust$id.med)</code></pre>
+<pre><code>## # A tibble: 2 x 6
+##   Digit_Code State_Abbreviation  PMHD    LE    IS     POP
+##        &lt;dbl&gt; &lt;chr&gt;              &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+## 1      47000 TN                  4.47  76.1 0.364 6715984
+## 2      27095 MN                  3.15  77.2 0.355   25872</code></pre>
+<pre class="r"><code>fdataclust$silinfo$avg.width</code></pre>
+<pre><code>## [1] 0.9733788</code></pre>
+<pre class="r"><code>fdataclust$silinfo$clus.avg.widths</code></pre>
+<pre><code>## [1] 0.1905178 0.9815542</code></pre>
+<P style="page-break-before: always">
+<p>…</p>
+<pre class="r"><code>data(package = .packages(all.available = TRUE))</code></pre>
+<p>…</p>
+</div>
+</div>

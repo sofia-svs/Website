@@ -1,0 +1,5 @@
+"0","joinedData%>%ggpairs(columns = 3:6)
+joinedData%>%ggpairs(columns = 3:6)
+"
+"0","joinedData%>%mutate(cluster=as.factor(fdataclust$clustering))%>%"
+"0","ggpairs(columns = 3:6,aes(color=cluster))"
