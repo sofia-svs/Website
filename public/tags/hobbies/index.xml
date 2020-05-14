@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hobbies on Portfolio</title>
+    <link>/tags/hobbies/</link>
+    <description>Recent content in Hobbies on Portfolio</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 14 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/hobbies/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>About Me</title>
+      <link>/aboutme/about-me/</link>
+      <pubDate>Thu, 14 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/aboutme/about-me/</guid>
+      <description>About MeAcademic HistoryOriginally I attended the Liberal Arts &amp;amp; Science Academy (LASA) in north-east Austin for high school, were I became intrigued and inspired by the world of biology. Being active participant in the Robotics Club, I always thought I would go on to major in some field of engineering, though my eye was on Biomedical engineering. After taking a gap year where I volunteered abroad working in gardening, agriculture, and horticulture work I decided to start my major off in a more broad field so as to allow myself time and space to be exposed to wider variety of future possibilities.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>biography on Portfolio</title>
+    <link>/categories/biography/</link>
+    <description>Recent content in biography on Portfolio</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Sun, 02 Oct 2016 22:55:05 -0400</lastBuildDate>
+    
+	<atom:link href="/categories/biography/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Biography</title>
+      <link>/biography/</link>
+      <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
+      
+      <guid>/biography/</guid>
+      <description>About Me Academic History Originally I attended the Liberal Arts &amp;amp; Science Academy (LASA) in north-east Austin for high school, were I became intrigued and inspired by the world of biology. Being active participant in the Robotics Club, I always thought I would go on to major in some field of engineering, though my eye was on Biomedical engineering. After taking a gap year where I volunteered abroad working in gardening, agriculture, and horticulture work I decided to start my major off in a more broad field so as to allow myself time and space to be exposed to wider variety of future possibilities.</description>
+    </item>
+    
+  </channel>
+</rss>
