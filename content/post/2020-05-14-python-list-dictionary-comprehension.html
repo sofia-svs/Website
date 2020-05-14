@@ -1,0 +1,38 @@
+---
+title: "Python List & Dictionary Comprehension"
+author: "Sofia Valdivieso-Sinyakov"
+date: '2020-05-14'
+slug: python-list-dictionary-comprehension
+categories: ["R"]
+tags: ["R Markdown", "Python"]
+---
+
+
+
+<p>I’ve been hearing how wonderful python is from some of my computer science friends for a very long time now, so I’ve been looking forward to this portion of the class for quite a while. After spending a bit of time perusing the interwebs about different useful, and fun, applications of python, I stumbled upon a very well artiuclated video about the use of dictionaries and lists in python, and how they work very well together.</p>
+<p>First, I’ll talk about the alternative way that I found you can write python script to pull a certain property from an object in a more effiecient manner using list comprehension.</p>
+<p>Traditionally, using conventional syntax, you may have to write a code like the following, which takes four lines and can just add to the clutter:</p>
+<pre class="python"><code>candies = [
+  {&#39;name&#39;: &#39;snickers&#39;, &#39;price&#39;: 1.25},
+  {&#39;name&#39;: &#39;warheads&#39;, &#39;price&#39;: 2.50},
+  {&#39;name&#39;: &#39;skittles&#39;, &#39;price&#39;: 1.75},
+  {&#39;name&#39;: &#39;licorice&#39;, &#39;price&#39;: 2.00}
+]
+
+#Conventional Syntax:
+candy_names = []
+for candy in candies:
+  candy_names.append(candy[&#39;name&#39;])
+print (candy_names)</code></pre>
+<pre><code>## [&#39;snickers&#39;, &#39;warheads&#39;, &#39;skittles&#39;, &#39;licorice&#39;]</code></pre>
+<p>Using list comprehension, you’re able to write a loop-like syntax and modify the output in a single line, while even incorporating some conditional statements to filter the list you create. Of course you can save this line as a variable name as normal with the equals sign, but I decided just to print it for the sake of simplicity.</p>
+<pre class="python"><code>print([candy[&#39;name&#39;] for candy in candies if candy[&#39;name&#39;][0] == &#39;s&#39;])</code></pre>
+<pre><code>## [&#39;snickers&#39;, &#39;skittles&#39;]</code></pre>
+<p>Next, lets talk about dictionary comprehension.</p>
+<p>Up till now, my understanding of what exactly a dictionary is consisted of me simply boiling down the concept to equate a list(s) with its objects in no particular order (which I’ve been told isn’t too far off…but that there was way more to it). Dictionaries are a very useful tool, and apparently R has a few libraries (hash, hashmap, and dict) to be able to use them directly, but I’ll focus on their use in python since that’s where I got my most recent practice.</p>
+<p>As you can see, this is pretty similar to the list comprehension examplified above. Again, instead of looping through to set the key and value, we can do it all on one line.</p>
+<pre class="python"><code>print({candy[&#39;name&#39;]: candy[&#39;price&#39;] for candy in candies})</code></pre>
+<pre><code>## {&#39;snickers&#39;: 1.25, &#39;warheads&#39;: 2.5, &#39;skittles&#39;: 1.75, &#39;licorice&#39;: 2.0}</code></pre>
+<p>This allows us to set the key and value for a normal loop with the second variable that’s created from looking at each item.</p>
+<p>So now after coding about candy…I’m craving some. Time for a snack break!</p>
+<p><img src="/post/2020-05-14-python-list-dictionary-comprehension_files/mmm_candy.jpg" /></p>

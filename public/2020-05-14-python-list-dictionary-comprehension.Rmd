@@ -1,0 +1,18 @@
+---
+title: "Python List & Dictionary Comprehension"
+author: "Sofia Valdivieso-Sinyakov"
+date: '2020-05-14'
+slug: python-list-dictionary-comprehension
+categories: ["R"]
+tags: ["R Markdown", "Python"]
+---
+
+I've been hearing how wonderful python is from some of my computer science friends for a very long time now, so I've had been looking forward to this portion of the class for a very long time. After spending a bit of time perusing the interwebs about different useful, and fun, applications of python, I stumbled upon a very well artiuclated video about the use of dictionaries and lists in python, and how they work very well together. Up till now, my understanding of what exactly a dictionary is consisted of my simply boiling down the concept to equate a list(s) with its objects in no particular order (which I've been told isn't too far off...but that there was way more to it). Dictionaries are a very useful tool, and apparently R has a few libraries (hash, hashmap, and dict) to be able to use them directly, but I'll focus on their use in python since that's where I got my most recent practice.
+
+Here I'll talk about the alternative way that I found you can write python script to pull a certain property from an object in a more effiecient manner using list comprehension.
+
+In the code you're able to write a loop-like syntax and modify the output in a single line, while even incorporating some conditional statements.
+
+```{python}
+
+```

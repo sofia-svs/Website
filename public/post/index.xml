@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Portfolio</title>
+    <link>/post/</link>
+    <description>Recent content in Posts on Portfolio</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 14 May 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Python List &amp; Dictionary Comprehension</title>
+      <link>/2020/05/14/python-list-dictionary-comprehension/</link>
+      <pubDate>Thu, 14 May 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/2020/05/14/python-list-dictionary-comprehension/</guid>
+      <description>I’ve been hearing how wonderful python is from some of my computer science friends for a very long time now, so I’ve been looking forward to this portion of the class for quite a while. After spending a bit of time perusing the interwebs about different useful, and fun, applications of python, I stumbled upon a very well artiuclated video about the use of dictionaries and lists in python, and how they work very well together.</description>
+    </item>
+    
+  </channel>
+</rss>

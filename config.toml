@@ -25,17 +25,17 @@ theme = "hugo-sustain"
 
 ## Main Menu
 [[menu.main]]
-  name = "blog"
+  name = "post"
   weight = 100
-  identifier = "blog"
-  url = "/blog/"
+  identifier = "post"
+  url = "/post/"
 [[menu.main]]
   name = "projects"
   identifier = "projects"
   weight = 200
-  url = "/projects/"
+  url = "/Projects/"
 [[menu.main]]
   name = "resume"
   identifier = "resume"
   weight = 300
-  url = "/resume/"
+  url = "/resume.pdf"
