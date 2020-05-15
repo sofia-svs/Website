@@ -2,7 +2,7 @@
 title: "About Me"
 author: "Sofia Valdivieso-Sinyakov"
 date: '2020-05-14'
-slug: about-me
+slug: aboutme
 tags: ['History', 'Hobbies', 'Current Interests']
 ---
 
