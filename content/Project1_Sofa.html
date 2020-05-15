@@ -386,12 +386,13 @@ ggplot(statesAG, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbrevi
     scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
 <p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ggplot(statesHMD, aes(PMHD, IS, size = POP)) + geom_point(mapping = aes(color = State_Abbreviation), 
-    ) + scale_size(range = c(0.1, 12), name = &quot;Population&quot;) + 
-    ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
-    ylab(&quot;Percent of Population Having Insufficient Sleep&quot;, labels=ks) + 
+    ) + scale_size_continuous(range = c(0.1, 12), name = &quot;Population&quot;, 
+    labels = label_number(accuracy = 1, scale = 1&divide;1000, suffix = &quot;k&quot;, big.mark = &quot;,&quot;)) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
+    ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
     scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(3, 
-        4, 5)) + scale_color_brewer(palette = &quot;Set3&quot;) + theme(plot.title = element_text(hjust = 0.5), 
-    legend.direction = &quot;vertical&quot;, legend.box = &quot;horizontal&quot;)</code></pre>
+        4, 5)) + scale_color_brewer(palette = &quot;Set3&quot;, name = &quot;State&quot;) + 
+    theme(plot.title = element_text(hjust = 0.5), legend.direction = &quot;vertical&quot;, 
+        legend.box = &quot;horizontal&quot;)</code></pre>
 <p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ggplot(statesMNJ, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbreviation), 
     ) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 

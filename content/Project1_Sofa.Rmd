@@ -182,7 +182,6 @@ The next plot I also split into multiple parts due to having too many categories
 #Plot 2
 library(ggplot2)
 library(dplyr)
-ks <- function (x) { number_format(accuracy = 1, scale = 1/1000, suffix = "k", big.mark = ",")(x) }
 statesAG <-joinedData%>%slice(1:556)%>%
   mutate(Insufficient_Sleepers=(IS*POP))%>%
   select(State_Abbreviation, IS, PMHD, Insufficient_Sleepers)
@@ -209,7 +208,7 @@ geom_point(mapping=aes(color = State_Abbreviation),)+
 
 ggplot(statesHMD, aes(PMHD,IS, size= POP))+
 geom_point(mapping=aes(color = State_Abbreviation),)+ 
-  scale_size(range = c(.1, 12), name="Population", labels = ks)+ 
+  scale_size_continuous(range = c(.1, 12), name="Population", labels=label_number(accuracy = 1, scale = 1/1000, suffix = "k", big.mark=","))+ 
   ggtitle("Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days") + 
   ylab("Percent of Population Having Insufficient Sleep") + 
   scale_x_continuous("Poor Mental Health Days (count)", breaks = c(3, 4, 5)) + 
