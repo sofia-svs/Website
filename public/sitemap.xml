@@ -83,6 +83,16 @@
   </url>
   
   <url>
+    <loc>/project2/</loc>
+    <lastmod>2020-04-27T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/project1_sofa/</loc>
+    <lastmod>2020-03-15T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
     <loc>/projects/</loc>
     <lastmod>2016-10-02T22:55:05-04:00</lastmod>
   </url>
@@ -95,14 +105,6 @@
   <url>
     <loc>/categories/projects/</loc>
     <lastmod>2016-10-02T22:55:05-04:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>/project1_sofa/</loc>
-  </url>
-  
-  <url>
-    <loc>/project2/</loc>
   </url>
   
 </urlset>

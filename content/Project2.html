@@ -1,7 +1,7 @@
 ---
 title: 'Project 2: Modeling, Testing, and Predicting'
 author: "Sofia Valdivieso-Sinyakov (sv23242) SDS348"
-date: "04/27/2020"
+date: "2020-04-27"
 output:
   pdf_document:
     toc: yes
@@ -277,7 +277,7 @@ abline(v = 0.00865056, col = &quot;red&quot;)
 <p><img src="/Project2_files/figure-html/unnamed-chunk-7-1.png" width="80%" height="32%" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>varP &lt;- mean(rand_dist &gt; 0.00865056 | rand_dist &lt; -0.00865056)
 varP</code></pre>
-<pre><code>[1] 6e-04</code></pre>
+<pre><code>[1] 0.002</code></pre>
 <pre class="r"><code># P-value equals 0.002, which is less than 0.05, so we can reject the null hypothes is
 that
 # populations that have a majority of the population being female or not have the same

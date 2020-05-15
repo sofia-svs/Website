@@ -39,6 +39,24 @@
     </item>
     
     <item>
+      <title>Project 2: Modeling, Testing, and Predicting</title>
+      <link>/project2/</link>
+      <pubDate>Mon, 27 Apr 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project2/</guid>
+      <description>ModelingFind data/Introduction/Tidying: I chose to work again with my dataset from project one because it revealed some interesting correlations. The original dataset has 3,191 observations and 534 Variables stemming from many different national data servers. I selected for 6 particular variables. Each observation contains the population of a particular city (not selected for/identified here but sourced from the Census Population Estimates) within a state in the US, and the percentage of that population that experienced insufficient sleep (data sourced from the Behavioral Risk Factor Surveillance System).</description>
+    </item>
+    
+    <item>
+      <title>Project 1</title>
+      <link>/project1_sofa/</link>
+      <pubDate>Sun, 15 Mar 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/project1_sofa/</guid>
+      <description>Data Wrangling and Data ExplorationFind data/Introduction:The original dataset I chose has 3,191 observations and 534 Variables stemming from many different national data servers. I selected for 6 particular variables. Each observation is labeled by a unique digit code, which I used later as the primary key to join the two self-made portions of the dataset back into one. The digit code was created for the dataset to label each unique observation.</description>
+    </item>
+    
+    <item>
       <title>Projects</title>
       <link>/projects/</link>
       <pubDate>Sun, 02 Oct 2016 22:55:05 -0400</pubDate>
@@ -48,25 +66,6 @@
   Exploratory Data Analysis with Tidyverse Tools
   Modeling, Testing, and Classification
   </description>
-    </item>
-    
-    <item>
-      <title>Project 1</title>
-      <link>/project1_sofa/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/project1_sofa/</guid>
-      <description>Data Wrangling and Data ExplorationInstructionsA knitted R Markdown document (as a PDF) and the raw R Markdown file (as .Rmd) should both be submitted to Canvas by 11:59pm on 3/8/2020. These two documents will be graded jointly, so they must be consistent (i.e., don’t change the R Markdown file without also updating the knitted document).
-Find data/Introduction:The original dataset I chose has 3,191 observations and 534 Variables stemming from many different national data servers.</description>
-    </item>
-    
-    <item>
-      <title>Project 2: Modeling, Testing, and Predicting</title>
-      <link>/project2/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
-      <guid>/project2/</guid>
-      <description>ModelingFind data/Introduction/Tidying: I chose to work again with my dataset from project one because it revealed some interesting correlations. The original dataset has 3,191 observations and 534 Variables stemming from many different national data servers. I selected for 6 particular variables. Each observation contains the population of a particular city (not selected for/identified here but sourced from the Census Population Estimates) within a state in the US, and the percentage of that population that experienced insufficient sleep (data sourced from the Behavioral Risk Factor Surveillance System).</description>
     </item>
     
   </channel>

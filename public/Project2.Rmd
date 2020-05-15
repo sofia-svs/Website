@@ -1,7 +1,7 @@
 ---
 title: 'Project 2: Modeling, Testing, and Predicting'
 author: "Sofia Valdivieso-Sinyakov (sv23242) SDS348"
-date: "04/27/2020"
+date: "2020-04-27"
 output:
   pdf_document:
     toc: yes

@@ -2,6 +2,7 @@
 title: "Project 1"
 author: "Sofia Valdivieso-Sinyakov (sv23242)"
 output: pdf_document
+date: "2020-03-15"
 ---
 
 ```{r setup, include=FALSE}
@@ -12,9 +13,6 @@ opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE)
 ```
 
 ## Data Wrangling and Data Exploration
-
-### Instructions
-A knitted R Markdown document (as a PDF) and the raw R Markdown file (as .Rmd) should both be submitted to Canvas by 11:59pm on 3/8/2020. These two documents will be graded jointly, so they must be consistent (i.e., don’t change the R Markdown file without also updating the knitted document).
 
 ### Find data/Introduction:
 

@@ -166,13 +166,11 @@ html, body {
   display: inline-block;
   margin-bottom: 5px;
 }
-.related-posts h4 {
-  text-align: center;
-}
 .page-not-found {
   padding-top: 20%;
 }
 .disqus {
+  text-align: center;
   padding-bottom: 15px;
 }
 .blogpost{
