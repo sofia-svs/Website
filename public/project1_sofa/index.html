@@ -433,6 +433,7 @@ The next plot I also split into multiple parts due to having too many categories
 <pre class="r"><code># Plot 2
 library(ggplot2)
 library(dplyr)
+library(scales)
 statesAG &lt;- joinedData %&gt;% slice(1:556) %&gt;% mutate(Insufficient_Sleepers = (IS * 
     POP)) %&gt;% select(State_Abbreviation, IS, PMHD, Insufficient_Sleepers)
 statesHMD &lt;- joinedData %&gt;% slice(557:1237) %&gt;% mutate(Insufficient_Sleepers = (IS * 
@@ -450,11 +451,11 @@ ggplot(statesAG, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbrevi
     ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
     scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(2.5, 
         3.5, 4.5, 5.5)) + theme(plot.title = element_text(hjust = 0.5)) + 
-    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+    scale_color_brewer(palette = &quot;Set3&quot;, name = &quot;State&quot;)</code></pre>
 <p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-1.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ggplot(statesHMD, aes(PMHD, IS, size = POP)) + geom_point(mapping = aes(color = State_Abbreviation), 
-    ) + scale_size_continuous(range = c(0.1, 12), name = &quot;Population&quot;, 
-    labels = label_number(accuracy = 1, scale = 1&divide;1000, suffix = &quot;k&quot;, big.mark = &quot;,&quot;)) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
+    ) + scale_size(name = &quot;Population&quot;, 
+    labels = label_number(accuracy = 1, scale = 1&divide;1000, suffix = &quot;k&quot;, big.mark = &quot;,&quot;), range = c(0.1, 12)) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
     ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
     scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(3, 
         4, 5)) + scale_color_brewer(palette = &quot;Set3&quot;, name = &quot;State&quot;) + 
@@ -466,21 +467,21 @@ ggplot(statesAG, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbrevi
     ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
     scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(3, 
         4, 5)) + theme(plot.title = element_text(hjust = 0.5)) + 
-    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+    scale_color_brewer(palette = &quot;Set3&quot;, name = &quot;State&quot;)</code></pre>
 <p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-3.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ggplot(statesNSC, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbreviation), 
     ) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
     ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
     scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(2.5, 
         3.5, 4.5, 5.5)) + theme(plot.title = element_text(hjust = 0.5)) + 
-    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+    scale_color_brewer(palette = &quot;Set3&quot;, name = &quot;State&quot;)</code></pre>
 <p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-4.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ggplot(statesSDW, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbreviation), 
     ) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
     ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
     scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(2.5, 
         3.5, 4.5, 5.5)) + theme(plot.title = element_text(hjust = 0.5)) + 
-    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+    scale_color_brewer(palette = &quot;Set3&quot;, name = &quot;State&quot;)</code></pre>
 <p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-5.png" width="672" style="display: block; margin: auto;" /></p>
 <ol start="5" style="list-style-type: decimal">
 <li>Perform k-means/PAM clustering or PCA on (at least) your numeric variables.</li>
