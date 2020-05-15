@@ -203,7 +203,7 @@ geom_point(mapping=aes(color = State_Abbreviation),)+
   ggtitle("Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days") + 
   ylab("Percent of Population Having Insufficient Sleep") + 
   scale_x_continuous("Poor Mental Health Days (count)", breaks = c(2.5, 3.5, 4.5, 5.5)) + 
-  theme(plot.title = element_text(hjust = 0.5))+
+  theme(plot.title = element_text(hjust = 0.5))+ 
   scale_color_brewer(palette="Set3")
 
 ggplot(statesHMD, aes(PMHD,IS, size= POP))+
@@ -212,8 +212,8 @@ geom_point(mapping=aes(color = State_Abbreviation),)+
   ggtitle("Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days") + 
   ylab("Percent of Population Having Insufficient Sleep") + 
   scale_x_continuous("Poor Mental Health Days (count)", breaks = c(3, 4, 5)) + 
-  theme(plot.title = element_text(hjust = 0.5))+
-  scale_color_brewer(palette="Set3")
+  scale_color_brewer(palette="Set3")+ 
+  theme(plot.title = element_text(hjust = 0.5), legend.direction = "vertical", legend.box = "horizontal")
 
 ggplot(statesMNJ, aes(PMHD,IS))+
 geom_point(mapping=aes(color = State_Abbreviation),)+ 

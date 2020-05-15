@@ -72,6 +72,8 @@
           <div class="panel-body">
             <div class="blogpost">
               
+
+
 <div id="data-wrangling-and-data-exploration" class="section level2">
 <h2>Data Wrangling and Data Exploration</h2>
 <div id="find-dataintroduction" class="section level3">
@@ -455,8 +457,8 @@ ggplot(statesAG, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbrevi
     ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
     ylab(&quot;Percent of Population Having Insufficient Sleep&quot;) + 
     scale_x_continuous(&quot;Poor Mental Health Days (count)&quot;, breaks = c(3, 
-        4, 5)) + theme(plot.title = element_text(hjust = 0.5)) + 
-    scale_color_brewer(palette = &quot;Set3&quot;)</code></pre>
+        4, 5)) + scale_color_brewer(palette = &quot;Set3&quot;) + theme(plot.title = element_text(hjust = 0.5), 
+    legend.direction = &quot;vertical&quot;, legend.box = &quot;horizontal&quot;)</code></pre>
 <p><img src="/Project1_Sofa_files/figure-html/unnamed-chunk-19-2.png" width="672" style="display: block; margin: auto;" /></p>
 <pre class="r"><code>ggplot(statesMNJ, aes(PMHD, IS)) + geom_point(mapping = aes(color = State_Abbreviation), 
     ) + ggtitle(&quot;Insufficient Sleep Per State Correlated to \n Number of Poor Mental Health Days&quot;) + 
