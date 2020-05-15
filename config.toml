@@ -41,6 +41,6 @@ theme = "hugo-sustain"
   url = "/resume.pdf"
 [[menu.main]]
   name = "about me"
-  identifier = "aboutme"
+  identifier = "about-me"
   weight = 300
-  url = "/aboutme/"
+  url = "/about-me/"

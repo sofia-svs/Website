@@ -40,11 +40,13 @@
       <ul class="nav navbar-nav navbar-right">
       
         
-        <li><a href="/blog/">BLOG</a></li>
+        <li><a href="/post/">POST</a></li>
         
         <li><a href="/projects/">PROJECTS</a></li>
         
-        <li><a href="/resume/">RESUME</a></li>
+        <li><a href="/about-me/">ABOUT ME</a></li>
+        
+        <li><a href="/resume.pdf">RESUME</a></li>
         
       
       </ul>
@@ -76,13 +78,34 @@
               
 
 
-<p>I’ve been hearing how wonderful python is from some of my computer science friends for a very long time now, so I’ve had been looking forward to this portion of the class for a very long time. After spending a bit of time perusing the interwebs about different useful, and fun, applications of python, I stumbled upon a very well artiuclated video about the use of dictionaries and lists in python, and how they work very well together. Up till now, my understanding of what exactly a dictionary is consisted of my simply boiling down the concept to equate a list(s) with its objects in no particular order (which I’ve been told isn’t too far off…but that there was way more to it). Dictionaries are a very useful tool, and apparently R has a few libraries (hash, hashmap, and dict) to be able to use them directly, but I’ll focus on their use in python since that’s where I got my most recent practice.</p>
-<p>Here I’ll talk about the alternative way that I found you can write python script to pull a certain property from an object in a more effiecient manner using list comprehension.</p>
-<p>In the code you’re able to write a loop-like syntax and modify the output in a single line, while even incorporating some conditional statements.</p>
+<p>I’ve been hearing how wonderful python is from some of my computer science friends for a very long time now, so I’ve been looking forward to this portion of the class for quite a while. After spending a bit of time perusing the interwebs about different useful, and fun, applications of python, I stumbled upon a very well artiuclated video about the use of dictionaries and lists in python, and how they work very well together.</p>
+<p>First, I’ll talk about the alternative way that I found you can write python script to pull a certain property from an object in a more effiecient manner using list comprehension.</p>
+<p>Traditionally, using conventional syntax, you may have to write a code like the following, which takes four lines and can just add to the clutter:</p>
+<pre class="python"><code>candies = [
+  {&#39;name&#39;: &#39;snickers&#39;, &#39;price&#39;: 1.25},
+  {&#39;name&#39;: &#39;warheads&#39;, &#39;price&#39;: 2.50},
+  {&#39;name&#39;: &#39;skittles&#39;, &#39;price&#39;: 1.75},
+  {&#39;name&#39;: &#39;licorice&#39;, &#39;price&#39;: 2.00}
+]
 
-              <hr>
-              <div class="related-posts">
-                <h5>Related Posts</h5>
+#Conventional Syntax:
+candy_names = []
+for candy in candies:
+  candy_names.append(candy[&#39;name&#39;])
+print (candy_names)</code></pre>
+<pre><code>## [&#39;snickers&#39;, &#39;warheads&#39;, &#39;skittles&#39;, &#39;licorice&#39;]</code></pre>
+<p>Using list comprehension, you’re able to write a loop-like syntax and modify the output in a single line, while even incorporating some conditional statements to filter the list you create. Of course you can save this line as a variable name as normal with the equals sign, but I decided just to print it for the sake of simplicity.</p>
+<pre class="python"><code>print([candy[&#39;name&#39;] for candy in candies if candy[&#39;name&#39;][0] == &#39;s&#39;])</code></pre>
+<pre><code>## [&#39;snickers&#39;, &#39;skittles&#39;]</code></pre>
+<p>Next, lets talk about dictionary comprehension.</p>
+<p>Up till now, my understanding of what exactly a dictionary is consisted of me simply boiling down the concept to equate a list(s) with its objects in no particular order (which I’ve been told isn’t too far off…but that there was way more to it). Dictionaries are a very useful tool, and apparently R has a few libraries (hash, hashmap, and dict) to be able to use them directly, but I’ll focus on their use in python since that’s where I got my most recent practice.</p>
+<p>As you can see, this is pretty similar to the list comprehension examplified above. Again, instead of looping through to set the key and value, we can do it all on one line.</p>
+<pre class="python"><code>print({candy[&#39;name&#39;]: candy[&#39;price&#39;] for candy in candies})</code></pre>
+<pre><code>## {&#39;snickers&#39;: 1.25, &#39;warheads&#39;: 2.5, &#39;skittles&#39;: 1.75, &#39;licorice&#39;: 2.0}</code></pre>
+<p>This allows us to set the key and value for a normal loop with the second variable that’s created from looking at each item.</p>
+<p>So now after coding about candy…I’m craving some. Time for a snack break!</p>
+<p><img src="/post/2020-05-14-python-list-dictionary-comprehension_files/mmm_candy.jpg" /></p>
+
                 
                   <div class="row">
                     <div class="col-sm-4 col-md-4 col-lg-4">
@@ -97,24 +120,12 @@
                     </div>
                   </div>
                 
-                  <div class="row">
-                    <div class="col-sm-4 col-md-4 col-lg-4">
-                      <h6 style="text-align: right">
-                        July 23, 2015
-                      </h6>
-                    </div>
-                    <div class="col-sm-8 col-md-8 col-lg-8">
-                      <h6 style="text-align: left">
-                        <strong><a href="/blog/2015-07-23-r-rmarkdown/">Hello R Markdown</a></strong>
-                      </h6>
-                    </div>
-                  </div>
-                
               </div>
             </div>
           </div>
           <hr>
-        <div class="disqus">
+        <div style="text-align: center">
+<div class="disqus">
   <div id="disqus_thread"></div>
   <script type="text/javascript">
 
@@ -131,7 +142,8 @@
     })();
   </script>
   <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-  <a href="http://disqus.com/" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+  <a href="http://disqus.com/" class="dsq-brlink">Comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
 </div>
         </div>
       </div>
